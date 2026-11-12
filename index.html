@@ -122,9 +122,8 @@ footer{margin-top:25px;color:var(--muted);font-size:11px}
 </div>
 <div class="actions">
 <button class="primary" id="submit">Categorize ↗</button>
-<button id="skip" class="secondary">Skip</button>
+<button id="skip" class="secondary">Skip ↻</button>
 </div>
-<button id="random" style="width:100%;margin-top:9px">↻ Generate another sample</button>
 <div class="stats">
 <div class="stat"><strong id="total">0</strong><span>COLORS LABELED</span></div>
 <div class="stat"><strong id="count">0</strong><span>UNIQUE CATEGORIES</span></div>
@@ -690,7 +689,6 @@ function categorize() {
 
 $('submit').onclick=categorize;
 $('skip').onclick=()=>{sequence++;next()};
-$('random').onclick=()=>{sequence++;next()};
 
 $('category').addEventListener('keydown',e=>{
   if(e.key==='Enter'){
