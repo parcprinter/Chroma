@@ -120,6 +120,17 @@ footer{margin-top:25px;color:var(--muted);font-size:11px}
 <p class="subtitle" style="font-size:12px;margin-top:15px">Your labels build the color vocabulary and gradually reveal the boundaries between categories.</p>
 <button id="reset" style="margin-top:18px;width:100%;color:#e99b9b">Reset experiment</button>
 </div>
+<div class="panel bottom">
+<div class="panel-title">
+<span>05 / Category boundaries</span>
+<span class="hex">HUE × LIGHTNESS</span>
+</div>
+<canvas id="boundaries"></canvas>
+<div class="legend">
+<span>Voronoi boundaries</span>
+<span id="boundaryStatus">Ready</span>
+</div>
+</div>
 </section>
 </div>
 <footer>CHROMA / A SMALL EXPERIMENT IN COLOR AND LANGUAGE</footer>
@@ -133,9 +144,11 @@ const space = $('space');
 const ctx = space.getContext('2d',{alpha:false});
 const regions = $('regions');
 const rctx = regions.getContext('2d',{alpha:false});
+const boundaries = $('boundaries');
+const bctx = boundaries.getContext('2d', { alpha: false });
 
-const REGION_WIDTH = 1920;
-const REGION_HEIGHT = 1080;
+const REGION_WIDTH = 192;
+const REGION_HEIGHT = 108;
 
 let saturation=90;
 let samples=loadSamples();
@@ -336,6 +349,109 @@ function drawRegionResult(buffer,names,colors){
   $('workerStatus').textContent='Up to date';
 }
 
+function drawBoundaries() {
+  const W = REGION_WIDTH;
+  const H = REGION_HEIGHT;
+
+  boundaries.width = W;
+  boundaries.height = H;
+
+  // Draw the original HSL color space.
+  const image = bctx.createImageData(W, H);
+
+  for (let y = 0; y < H; y++) {
+    const l = 100 - y / H * 100;
+
+    for (let x = 0; x < W; x++) {
+      const c = rgb(x / W * 360, l, saturation);
+      const i = (y * W + x) * 4;
+
+      image.data[i] = c[0];
+      image.data[i + 1] = c[1];
+      image.data[i + 2] = c[2];
+      image.data[i + 3] = 255;
+    }
+  }
+
+  bctx.putImageData(image, 0, 0);
+
+  // Calculate category ownership.
+  const owners = new Int32Array(W * H);
+  const categories = [...new Set(samples.map(s => s.name))];
+
+  for (let y = 0; y < H; y++) {
+    const l = 100 - y / H * 100;
+
+    for (let x = 0; x < W; x++) {
+      const h = x / W * 360;
+
+      let best = Infinity;
+      let bestId = -1;
+
+      samples.forEach((s, i) => {
+        let dh = Math.abs(h - s.h);
+        dh = Math.min(dh, 360 - dh);
+        dh *= Math.max(0.15, Math.sin((100 - l) * Math.PI / 180));
+
+        const dl = (l - s.l) * 1.8;
+        const d = dh * dh + dl * dl;
+
+        if (d < best) {
+          best = d;
+          bestId = categories.indexOf(s.name);
+        }
+      });
+
+      owners[y * W + x] = bestId;
+    }
+  }
+
+  // Draw a line wherever neighboring pixels belong
+  // to different categories.
+  bctx.beginPath();
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      const owner = owners[i];
+
+      if (x < W - 1 && owner !== owners[i + 1]) {
+        bctx.moveTo(x + 1, y);
+        bctx.lineTo(x + 1, y + 1);
+      }
+
+      if (y < H - 1 && owner !== owners[i + W]) {
+        bctx.moveTo(x, y + 1);
+        bctx.lineTo(x + 1, y + 1);
+      }
+    }
+  }
+
+  bctx.strokeStyle = '#ffffff';
+  bctx.lineWidth = 1;
+  bctx.stroke();
+
+  // Draw sample markers.
+  samples.forEach(s => {
+    bctx.beginPath();
+    bctx.arc(
+      s.h / 360 * W,
+      (100 - s.l) / 100 * H,
+      2.5,
+      0,
+      Math.PI * 2
+    );
+
+    bctx.fillStyle = s.hex;
+    bctx.fill();
+    bctx.strokeStyle = '#fff';
+    bctx.lineWidth = 0.7;
+    bctx.stroke();
+  });
+
+  $('boundaryStatus').textContent = 'Up to date';
+}
+
 function updateRegions(){
   if(!worker){
     rctx.fillStyle='#111216';
@@ -407,6 +523,7 @@ function render(){
   renderStats();
   resizeCanvas();
   updateRegions();
+  drawBoundaries();
 }
 
 function next(){
@@ -432,6 +549,7 @@ function categorize(){
   save();
   renderStats();
   updateRegions();
+  drawBoundaries();
   next();
 }
 
@@ -511,6 +629,7 @@ window.addEventListener('resize',()=>{
     drawSpace();
     resizeCanvas();
     updateRegions();
+    drawBoundaries();
   },100);
 });
 
