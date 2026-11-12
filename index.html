@@ -651,7 +651,7 @@ function next(){
 function categorize() {
   const name = $('category').value.trim().toLowerCase();
 
-  if (!name || !current) return;
+  if (!current) return;
 
   const entry = {
     h: current.h,
@@ -665,15 +665,20 @@ function categorize() {
     editingSampleIndex !== null &&
     samples[editingSampleIndex]
   ) {
-    // Update the existing sample instead of duplicating it.
-    samples[editingSampleIndex] = {
-      ...samples[editingSampleIndex],
-      ...entry
-    };
+      if (!name) {
+        // Remove the existing sample if its name is empty.
+        samples.splice(editingSampleIndex, 1);
+      } else {
+        // Update the existing sample instead of duplicating it.
+        samples[editingSampleIndex] = {
+          ...samples[editingSampleIndex],
+          ...entry
+        };
 
-    editingSampleIndex = null;
-
+        editingSampleIndex = null;
+    }
   } else {
+    if (!name) return; //. Don't create empty sample
     // Create a new sample.
     samples.push(entry);
     sequence++;
@@ -695,6 +700,14 @@ $('category').addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     e.preventDefault();
 
+    if (e.ctrlKey) {
+      // Skip current sample.
+      sequence++;
+      next();
+      return;
+    }
+
+    // Normal Enter submits.
     if (suggestionsFrozen && suggestionIndex >= 0) {
       $('category').value = frozenSuggestions[suggestionIndex];
     }
