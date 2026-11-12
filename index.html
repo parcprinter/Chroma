@@ -28,7 +28,6 @@ canvas{width:100%;display:block;border-radius:6px}
 #space{aspect-ratio:1.5;cursor:crosshair}
 #regions{aspect-ratio:1.5;width:100%;height:auto;}
 .legend{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:10px}
-.control{margin-top:20px}
 label{display:block;color:var(--muted);margin-bottom:7px;font-size:12px}
 input,button{font:inherit;color:var(--text);background:#222429;border:1px solid var(--border);border-radius:7px;padding:11px 12px}
 input:focus{outline:1px solid var(--accent);border-color:var(--accent)}
@@ -80,10 +79,6 @@ footer{margin-top:25px;color:var(--muted);font-size:11px}
 <div class="panel-title"><span>01 / Color space</span><span class="hex">HUE × LIGHTNESS</span></div>
 <canvas id="space"></canvas>
 <div class="legend"><span>Dark</span><span>Lightness →</span><span>Light</span></div>
-<div class="control">
-<label for="sat">Saturation: <span id="satValue">90%</span></label>
-<input id="sat" type="range" min="50" max="100" value="90" style="width:100%;padding:0;accent-color:var(--accent)">
-</div>
 <div class="legend"><span>Hue 0°</span><span>Hue ↑</span><span>Hue 360°</span></div>
 </div>
 <div class="panel bottom">
@@ -170,7 +165,7 @@ let regionHover = null;
 let hoveredSampleIndex = -1;
 let regionImageCache = null;
 
-let saturation=90;
+const SATURATION=100;
 let samples=loadSamples();
 let current=null;
 let sequence=samples.length+1;
@@ -215,7 +210,7 @@ function rgb(h,l,s){
 function toHex(h,l,s){
   return '#'+rgb(h,l,s).map(v=>v.toString(16).padStart(2,'0')).join('');
 }
-function hsl(h,l,s=saturation){
+function hsl(h,l,s=SATURATION){
   return `hsl(${h},${s}%,${l}%)`;
 }
 function rand(){
@@ -411,7 +406,7 @@ function drawSpace(){
     const l = 100 - y / H * 100;
 
     for (let x = 0; x < W; x++) {
-      const c = rgb(x / W * 360, l, saturation);
+      const c = rgb(x / W * 360, l, SATURATION);
       const i = (y * W + x) * 4;
 
       image.data[i] = c[0];
@@ -616,7 +611,7 @@ function renderStats(){
 
       $('category').value=s.name;
       $('sample').style.background=hsl(current.h,current.l);
-      $('hex').textContent=toHex(current.h,current.l,saturation);
+      $('hex').textContent=toHex(current.h,current.l,SATURATION);
 
       $('suggestions').hidden=true;
 
@@ -640,7 +635,7 @@ function render(){
 function next(){
   current=rand();
   $('sample').style.background=hsl(current.h,current.l);
-  $('hex').textContent=toHex(current.h,current.l,saturation);
+  $('hex').textContent=toHex(current.h,current.l,SATURATION);
   $('category').value='';
   $('suggestions').hidden=true;
   $('progress').textContent='SAMPLE '+String(sequence).padStart(3,'0');
@@ -658,7 +653,7 @@ function categorize() {
     h: current.h,
     l: current.l,
     name,
-    hex: toHex(current.h, current.l, saturation),
+    hex: toHex(current.h, current.l, SATURATION),
     time: Date.now()
   };
 
@@ -725,14 +720,6 @@ $('category').addEventListener('input',()=>{
   });
   box.hidden=!matches.length;
 });
-
-$('sat').oninput=e=>{
-  saturation=+e.target.value;
-  $('satValue').textContent=saturation+'%';
-  $('sample').style.background=hsl(current.h,current.l);
-  $('hex').textContent=toHex(current.h,current.l,saturation);
-  drawSpace();
-};
 
 $('reset').onclick=()=>{
   if(!confirm('Delete all samples and start over?'))return;
@@ -816,7 +803,7 @@ space.addEventListener('click', e => {
   $('hex').textContent = toHex(
     current.h,
     current.l,
-    saturation
+    SATURATION
   );
 
   drawSpace();
@@ -946,7 +933,7 @@ regions.addEventListener('mousemove', e => {
 
   let displayH = h;
   let displayL = l;
-  let color = toHex(h, l, saturation);
+  let color = toHex(h, l, SATURATION);
 
   if (nearest !== -1) {
     displayH = samples[nearest].h;
@@ -1008,7 +995,7 @@ regions.addEventListener('click', e => {
   $('hex').textContent = toHex(
     current.h,
     current.l,
-    saturation
+    SATURATION
   );
 
   drawSpace();
