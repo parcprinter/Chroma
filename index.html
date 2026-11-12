@@ -134,6 +134,9 @@ const ctx = space.getContext('2d',{alpha:false});
 const regions = $('regions');
 const rctx = regions.getContext('2d',{alpha:false});
 
+const REGION_WIDTH = 1920;
+const REGION_HEIGHT = 1080;
+
 let saturation=90;
 let samples=loadSamples();
 let current=null;
@@ -177,12 +180,11 @@ function rand(){
   return {h:Math.random()*360,l:15+Math.random()*70};
 }
 
-// Background worker: calculates category territory at only 180x120.
 function createWorker(){
   const source=`
   self.onmessage=e=>{
     const {samples,version}=e.data;
-    const W=180,H=120;
+    const W=${REGION_WIDTH},H=${REGION_HEIGHT};
     const result=new Uint8Array(W*H);
     if(!samples.length){
       self.postMessage({result,version},[result.buffer]);return;
@@ -274,7 +276,7 @@ function drawSpace(){
 }
 
 function drawRegionResult(buffer,names,colors){
-  const W=180,H=120;
+  const W=REGION_WIDTH,H=REGION_HEIGHT;
   const result=new Uint8Array(buffer);
   const image=rctx.createImageData(W,H);
   const palette=names.map(name=>{
