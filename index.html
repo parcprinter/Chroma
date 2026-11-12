@@ -134,8 +134,8 @@ const ctx = space.getContext('2d',{alpha:false});
 const regions = $('regions');
 const rctx = regions.getContext('2d',{alpha:false});
 
-const REGION_WIDTH = 192;
-const REGION_HEIGHT = 108;
+const REGION_WIDTH = 1440;
+const REGION_HEIGHT = 960;
 
 const BOUNDARY_WIDTH = 1440;
 const BOUNDARY_HEIGHT = 960;
@@ -344,7 +344,11 @@ function getBoundaryLayer() {
     }
   }
 
-  c.strokeStyle = 'rgba(255,255,255,0.9)';
+  const gradient = c.createLinearGradient(0, 0, 0, H);
+  gradient.addColorStop(0, '#000000');
+  gradient.addColorStop(1, '#ffffff');
+
+  c.strokeStyle = gradient;
   c.lineWidth = 2;
   c.stroke();
 
@@ -364,6 +368,11 @@ function drawSpace(){
 
   // Draw HSL gradient.
   const image = ctx.createImageData(W, H);
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, H);
+  gradient.addColorStop(0, '#000000');
+  gradient.addColorStop(1, '#ffffff');
+
 
   for (let y = 0; y < H; y++) {
     const l = 100 - y / H * 100;
@@ -399,7 +408,7 @@ function drawSpace(){
     ctx.arc(
       s.h / 360 * W,
       (100 - s.l) / 100 * H,
-      hovered ? 10 : 1.5,
+      hovered ? 10 : 3.5,
       0,
       Math.PI * 2
     );
@@ -407,8 +416,8 @@ function drawSpace(){
     ctx.fillStyle = s.hex;
     ctx.fill();
 
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = hovered ? 1.5 : 0.6;
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = hovered ? 2.5 : 1.5;
     ctx.stroke();
   });
 
@@ -419,13 +428,13 @@ function drawSpace(){
 
     ctx.beginPath();
     ctx.arc(x, y, 7, 0, Math.PI * 2);
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = gradient;
     ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.beginPath();
     ctx.arc(x, y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = gradient;
     ctx.fill();
   }
 }
@@ -434,6 +443,10 @@ function drawRegionResult(buffer,names,colors){
   const W=REGION_WIDTH,H=REGION_HEIGHT;
   const result=new Uint8Array(buffer);
   const image=rctx.createImageData(W,H);
+  const gradient = rctx.createLinearGradient(0, 0, 0, REGION_HEIGHT);
+
+  gradient.addColorStop(0, '#000000');
+  gradient.addColorStop(1, '#ffffff');
   const palette=names.map(name=>{
     const sample=samples.find(s=>s.name===name);
     const hex=sample?.hex||'#777777';
@@ -473,19 +486,21 @@ function drawRegionResult(buffer,names,colors){
     0,0,regions.width,regions.height
   );
   // Actual sample colors as markers.
+
+  rctx.strokeStyle=gradient;
+
   samples.forEach(s=>{
     rctx.beginPath();
     rctx.arc(
-      s.h/360*regions.width,
-      (100-s.l)/100*regions.height,
-      2.5,
+      s.h/360*W,
+      (100-s.l)/100*H,
+      10,
       0,
       Math.PI*2
     );
     rctx.fillStyle=s.hex;
     rctx.fill();
-    rctx.strokeStyle='#ffffff';
-    rctx.lineWidth=0.6;
+    rctx.lineWidth=1.6;
     rctx.stroke();
   });
   $('workerStatus').textContent='Up to date';
@@ -509,10 +524,10 @@ function updateRegions(){
 function resizeCanvas(){
   const rect=regions.getBoundingClientRect();
   if(!rect.width)return;
-  regions.width=360;
-  regions.height=240;
+  regions.width=REGION_WIDTH;
+  regions.height=REGION_HEIGHT;
   rctx.fillStyle='#111216';
-  rctx.fillRect(0,0,360,240);
+  rctx.fillRect(0,0,regions.width,regions.height);
 }
 
 function renderStats(){
