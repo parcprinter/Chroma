@@ -55,6 +55,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .category-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .tag{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-size:12px}
 .dot{width:9px;height:9px;border-radius:50%}
+#historyContent[hidden]{display:none}
 .history{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
 .history-item{width:27px;height:27px;border-radius:5px;cursor:pointer}
 .history-item:hover{transform:scale(1.15)}
@@ -130,8 +131,15 @@ footer{margin-top:25px;color:var(--muted);font-size:11px}
 </div>
 </div>
 <div class="panel bottom">
-<div class="panel-title"><span>04 / Recent samples</span><span class="hex">HISTORY</span></div>
-<div class="history" id="history"></div>
+<div class="panel-title" id="historyToggle" style="cursor:pointer">
+  <span>04 / Recent samples</span>
+  <span class="hex" id="historyArrow">▼ HISTORY</span>
+</div>
+
+<div id="historyContent">
+  <div class="history" id="history"></div>
+  <p class="subtitle" style="font-size:12px;margin-top:15px">Your labels build the color vocabulary and gradually reveal the boundaries between categories.</p>
+</div>
 <p class="subtitle" style="font-size:12px;margin-top:15px">Your labels build the color vocabulary and gradually reveal the boundaries between categories.</p>
 <button id="reset" style="margin-top:18px;width:100%;color:#e99b9b">Reset experiment</button>
 </div>
@@ -180,6 +188,15 @@ function loadSamples(){
     ): [];
   }catch{return []}
 }
+
+let historyExpanded=true;
+
+$('historyToggle').onclick=()=>{
+  historyExpanded=!historyExpanded;
+  $('historyArrow').textContent=
+    (historyExpanded?'▼':'▶')+' HISTORY';
+  renderStats();
+};
 
 function save(){
   try{localStorage.setItem('chromaSamples',JSON.stringify(samples))}
@@ -580,7 +597,7 @@ function renderStats(){
     $('categoryList').append(tag);
   });
   $('history').replaceChildren();
-  samples.slice(-35).reverse().forEach(s=>{
+  samples.slice(historyExpanded ? 0 : -40).reverse().forEach(s=>{
     const el=document.createElement('div');
     el.className='history-item';
     el.title=`${s.name} · ${s.hex} — Click to edit`;
