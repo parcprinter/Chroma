@@ -766,6 +766,8 @@ space.addEventListener('click', e => {
 
     $('category').value = '';
   }
+  $('category').focus();
+  $('category').select();
 
   $('suggestions').hidden = true;
 
@@ -951,6 +953,8 @@ regions.addEventListener('click', e => {
     current = { h, l };
 
     $('category').value = '';
+    $('category').focus();
+    $('category').select();
   }
 
   $('suggestions').hidden = true;
