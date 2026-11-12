@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,1171 +6,1067 @@
 <title>Chroma — Color Categories</title>
 <style>
 :root {
-  color-scheme:dark;
-  --bg:#101113;--panel:#191b1f;--border:#303238;
-  --muted:#92959e;--text:#f2f1ed;--accent:#c6f36a;
+  color-scheme: dark;
+  --bg: #101113;
+  --panel: #191b1f;
+  --border: #303238;
+  --muted: #92959e;
+  --text: #f2f1ed;
+  --accent: #c6f36a;
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
-font:14px/1.5 system-ui,sans-serif}
-main{max-width:1120px;margin:auto;padding:40px 24px 70px}
-header{display:flex;justify-content:space-between;margin-bottom:38px}
-.logo{font-size:19px;font-weight:750;letter-spacing:-1px}
-.logo span{color:var(--accent)}
-.eyebrow{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase}
-h1{font-size:32px;letter-spacing:-1.5px;margin:5px 0}
-.subtitle{color:var(--muted);margin:0}
-.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.8fr);gap:20px;margin-top:28px}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
-.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-weight:650}
-canvas{width:100%;display:block;border-radius:6px}
-#space{aspect-ratio:1.5;cursor:crosshair}
-#regions{aspect-ratio:1.5;width:100%;height:auto;}
-.legend{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:10px}
-label{display:block;color:var(--muted);margin-bottom:7px;font-size:12px}
-input,button{font:inherit;color:var(--text);background:#222429;border:1px solid var(--border);border-radius:7px;padding:11px 12px}
-input:focus{outline:1px solid var(--accent);border-color:var(--accent)}
-button{cursor:pointer}
-button:hover{border-color:var(--accent)}
-button.primary{background:var(--accent);color:#171a11;border-color:var(--accent);font-weight:700}
-button:disabled{opacity:.4;cursor:not-allowed}
-.sample{height:155px;border-radius:8px;margin-bottom:17px}
-.sample-info{display:flex;justify-content:space-between;align-items:center}
-.hex{font:12px ui-monospace,monospace;color:var(--muted)}
-#category{width:100%;background:#101113}
-.input-wrap{position:relative}
-.suggestions{position:absolute;top:100%;left:0;right:0;z-index:5;background:#25272c;border:1px solid var(--border);border-radius:7px;margin-top:4px;overflow:hidden}
-.suggestions button{display:block;width:100%;text-align:left;border:0;border-radius:0;background:transparent}
-.suggestions button:hover{background:#35383e}
-.actions{display:flex;gap:9px;margin-top:14px}
-.actions button{flex:1}
-.secondary{color:var(--muted)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-.stat{padding:12px;background:#222429;border-radius:8px}
-.stat strong{display:block;font-size:22px}
-.stat span{color:var(--muted);font-size:11px}
-.bottom{margin-top:20px}
-.category-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.tag{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-size:12px}
-.dot{width:9px;height:9px;border-radius:50%}
-#historyContent[hidden]{display:none}
-.history{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
-.history-item{width:27px;height:27px;border-radius:5px;cursor:pointer}
-.history-item:hover{transform:scale(1.15)}
-footer{margin-top:25px;color:var(--muted);font-size:11px}
-#workerStatus{font-size:10px;color:var(--muted)}
-@media(max-width:760px){main{padding:24px 15px}.layout{grid-template-columns:1fr}h1{font-size:27px}}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 system-ui, sans-serif;
+}
+
+main {
+  max-width: 1560px;
+  margin: auto;
+  padding: 40px 24px 70px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 38px;
+}
+
+.logo { font-size: 19px; font-weight: 750; letter-spacing: -1px; }
+.logo span { color: var(--accent); }
+.eyebrow { color: var(--muted); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+h1 { margin: 5px 0; font-size: 32px; letter-spacing: -1.5px; }
+.subtitle { margin: 0; color: var(--muted); }
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: 20px;
+  margin-top: 28px;
+  align-items: start;
+}
+
+.side-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  min-width: 0;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-weight: 650;
+}
+
+.space-heading { flex-wrap: wrap; }
+.hex { color: var(--muted); font: 12px ui-monospace, monospace; }
+
+.view-toggle { display: flex; gap: 5px; }
+.view-toggle button {
+  padding: 6px 9px;
+  color: var(--muted);
+  background: #222429;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+}
+.view-toggle button[aria-pressed="true"] {
+  color: var(--accent);
+  background: #303329;
+  border-color: #626b49;
+}
+
+button, input {
+  padding: 11px 12px;
+  color: var(--text);
+  background: #222429;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font: inherit;
+}
+
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:disabled { opacity: .4; cursor: not-allowed; }
+button.primary {
+  color: #171a11;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+.color-space {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.5;
+  overflow: hidden;
+  background: #111216;
+  border-radius: 6px;
+  isolation: isolate;
+}
+
+.color-space canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+#gradientLayer, #categoryLayer, #samplesLayer { pointer-events: none; }
+#cursorLayer { cursor: crosshair; touch-action: manipulation; }
+
+.legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+#workerStatus { font-size: 10px; text-align: right; }
+
+.sample {
+  height: 155px;
+  margin-bottom: 17px;
+  border-radius: 8px;
+}
+
+.sample-info { display: flex; justify-content: space-between; align-items: center; }
+.control { margin-top: 18px; }
+label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; }
+#category { width: 100%; background: #101113; }
+.input-wrap { position: relative; }
+.suggestions {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  margin-top: 4px;
+  background: #25272c;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+.suggestions[hidden] { display: none; }
+.suggestions button {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.suggestions button:hover, .suggestions button[aria-selected="true"] { background: #35383e; }
+
+.actions { display: flex; gap: 9px; margin-top: 14px; }
+.actions button { flex: 1; }
+.secondary { color: var(--muted); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.stat { padding: 12px; background: #222429; border-radius: 8px; }
+.stat strong { display: block; font-size: 22px; }
+.stat span { color: var(--muted); font-size: 11px; }
+
+.category-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 20px; }
+.category-heading .eyebrow { letter-spacing: 1px; }
+.category-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.tag {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  padding: 6px 9px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 12px;
+}
+.tag-label { overflow-wrap: anywhere; }
+.dot { flex: 0 0 9px; width: 9px; height: 9px; border-radius: 50%; }
+.rename {
+  padding: 1px 5px;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+}
+
+.history-toggle {
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.history-toggle:hover { border-color: transparent; }
+#historyContent[hidden] { display: none; }
+.history { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+.history-item {
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 1px solid #ffffff22;
+  border-radius: 5px;
+}
+.history-item:hover { transform: scale(1.15); }
+.history-description { margin-top: 15px; font-size: 12px; }
+#reset { width: 100%; margin-top: 18px; color: #e99b9b; }
+
+footer { margin-top: 25px; color: var(--muted); font-size: 11px; }
+
+@media (max-width: 1250px) {
+  .side-panels { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  main { padding: 28px 18px 55px; }
+  .layout { grid-template-columns: 1fr; }
+  .side-panels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  main { padding: 24px 15px 45px; }
+  h1 { font-size: 27px; }
+  .side-panels { grid-template-columns: 1fr; }
+  .panel { padding: 16px; }
+  .legend { align-items: flex-start; }
+}
 </style>
 </head>
 <body>
 <main>
-<header>
-<div class="logo">chroma<span>.</span></div>
-<div class="eyebrow">COLOR STUDY / 001</div>
-</header>
-<div class="eyebrow">COLOR PERCEPTION EXPERIMENT</div>
-<h1>Where do colors belong?</h1>
-<p class="subtitle">Explore a color space. Give colors names. Discover the boundaries of language.</p>
+  <header>
+    <div class="logo">chroma<span>.</span></div>
+    <div class="eyebrow">COLOR STUDY / 001</div>
+  </header>
 
-<div class="layout">
-<section>
-<div class="panel">
-<div class="panel-title"><span>01 / Color space</span><span class="hex">HUE × LIGHTNESS</span></div>
-<canvas id="space"></canvas>
-</div>
-<div class="panel bottom">
-<div class="panel-title"><span>03 / Category regions</span><span class="hex" id="regionCount">0 CATEGORIES</span></div>
-<div id="regionsWrap" style="position:relative;width:100%">
-  <canvas id="regions"></canvas>
-  <div id="regionCursor" style="
-    position:absolute;
-    display:none;
-    width:16px;
-    height:16px;
-    border-radius:50%;
-    border:3px solid white;
-    box-shadow:0 0 0 1px #111, 0 1px 5px #000;
-    transform:translate(-50%,-50%);
-    pointer-events:none;
-    z-index:10;
-  "></div>
-</div>
-<div class="legend"><span>Approximate category territories</span><span id="workerStatus">Ready</span></div>
-<div class="category-list" id="categoryList"></div>
-</div>
-</section>
+  <div class="eyebrow">COLOR PERCEPTION EXPERIMENT</div>
+  <h1>Where do colors belong?</h1>
+  <p class="subtitle">Explore a color space. Give colors names. Discover the boundaries of language.</p>
 
-<section>
-<div class="panel">
-<div class="panel-title"><span>02 / Identify a color</span><span class="eyebrow" id="progress">SAMPLE 001</span></div>
-<div class="sample" id="sample"></div>
-<div class="sample-info"><span class="eyebrow">CURRENT SAMPLE</span><span class="hex" id="hex">#000000</span></div>
-<div class="control">
-<label for="category">What would you call this color?</label>
-<div class="input-wrap">
-<input id="category" type="text" placeholder="e.g. teal, turquoise, cyan..." autocomplete="off">
-<div class="suggestions" id="suggestions" hidden></div>
-</div>
-</div>
-<div class="actions">
-<button class="primary" id="submit">Categorize ↗</button>
-<button id="next" class="secondary">Roll ↻</button>
-</div>
-<div class="stats">
-<div class="stat"><strong id="total">0</strong><span>COLORS LABELED</span></div>
-<div class="stat"><strong id="count">0</strong><span>UNIQUE CATEGORIES</span></div>
-</div>
-</div>
-<div class="panel bottom">
-<div class="panel-title" id="historyToggle" style="cursor:pointer">
-  <span>04 / Recent samples</span>
-  <span class="hex" id="historyArrow">▼ HISTORY</span>
-</div>
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-title space-heading">
+        <span>01 / Color space <span class="hex">HUE × LIGHTNESS</span></span>
+        <div class="view-toggle" role="group" aria-label="Color-space view">
+          <button id="boundariesToggle" type="button" aria-pressed="true">Lines</button>
+          <button id="regionsToggle" type="button" aria-pressed="false">Regions</button>
+        </div>
+      </div>
 
-<div id="historyContent">
-  <div class="history" id="history"></div>
-  <p class="subtitle" style="font-size:12px;margin-top:15px">Your labels build the color vocabulary and gradually reveal the boundaries between categories.</p>
-</div>
-<p class="subtitle" style="font-size:12px;margin-top:15px">Your labels build the color vocabulary and gradually reveal the boundaries between categories.</p>
-<button id="reset" style="margin-top:18px;width:100%;color:#e99b9b">Reset experiment</button>
-</div>
-</section>
-</div>
-<footer>CHROMA / A SMALL EXPERIMENT IN COLOR AND LANGUAGE</footer>
+      <div class="color-space" id="colorSpace">
+        <canvas id="gradientLayer" aria-hidden="true"></canvas>
+        <canvas id="categoryLayer" aria-hidden="true"></canvas>
+        <canvas id="samplesLayer" aria-hidden="true"></canvas>
+        <canvas id="cursorLayer" aria-label="Color space. Move the pointer to inspect a color; click to select it."></canvas>
+      </div>
+
+      <div class="legend">
+        <span>Click to inspect · Alt disables sample snapping</span>
+        <span id="workerStatus">Starting worker…</span>
+      </div>
+    </section>
+
+    <div class="side-panels">
+      <section class="panel">
+        <div class="panel-title">
+          <span>02 / Identify a color</span>
+          <span class="eyebrow" id="progress">SAMPLE 001</span>
+        </div>
+
+        <div class="sample" id="sample"></div>
+        <div class="sample-info">
+          <span class="eyebrow">CURRENT SAMPLE</span>
+          <span class="hex" id="hex">#000000</span>
+        </div>
+
+        <div class="control">
+          <label for="category">What would you call this color?</label>
+          <div class="input-wrap">
+            <input id="category" type="text" placeholder="e.g. teal, turquoise, cyan..." autocomplete="off">
+            <div class="suggestions" id="suggestions" hidden></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="submit" type="button">Categorize ↗</button>
+          <button id="next" class="secondary" type="button">Roll ↻</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong id="total">0</strong><span>COLORS LABELED</span></div>
+          <div class="stat"><strong id="count">0</strong><span>UNIQUE CATEGORIES</span></div>
+        </div>
+
+        <div class="category-heading">
+          <span class="eyebrow">YOUR CATEGORIES</span>
+          <span class="hex" id="regionCount">0 CATEGORIES</span>
+        </div>
+        <div class="category-list" id="categoryList"></div>
+      </section>
+
+      <section class="panel">
+        <button class="panel-title history-toggle" id="historyToggle" type="button" aria-expanded="true">
+          <span>03 / Recent samples</span>
+          <span class="hex" id="historyArrow">▼ HISTORY</span>
+        </button>
+
+        <div id="historyContent">
+          <div class="history" id="history"></div>
+          <p class="subtitle history-description">Your labels build the color vocabulary and gradually reveal the boundaries between categories.</p>
+        </div>
+
+        <button id="reset" type="button">Reset experiment</button>
+      </section>
+    </div>
+  </div>
+
+  <footer>CHROMA / A SMALL EXPERIMENT IN COLOR AND LANGUAGE</footer>
 </main>
 
 <script>
 'use strict';
 
 const $ = id => document.getElementById(id);
-const space = $('space');
-const ctx = space.getContext('2d',{alpha:false});
-const regions = $('regions');
-const rctx = regions.getContext('2d',{alpha:false});
+const SATURATION = 100;
+const SNAP_RADIUS = 10;
+const VIEW = { BOUNDARIES: 'boundaries', REGIONS: 'regions' };
 
-const REGION_WIDTH = 1440;
-const REGION_HEIGHT = 960;
+const space = $('colorSpace');
+const cursorLayer = $('cursorLayer');
+const cursorContext = cursorLayer.getContext('2d');
+const categoryInput = $('category');
+const suggestionsBox = $('suggestions');
 
-const BOUNDARY_WIDTH = 1440;
-const BOUNDARY_HEIGHT = 960;
-
-let boundaryLayer = null;
-let boundaryLayerKey = '';
+let samples = loadSamples();
+let current = null;
+let sequence = samples.length + 1;
 let editingSampleIndex = null;
-
-let regionHover = null;
-let hoveredSampleIndex = -1;
-let regionImageCache = null;
-
-const SATURATION=100;
-let samples=loadSamples();
-let current=null;
-let sequence=samples.length+1;
-let worker=null;
-let workerVersion=0;
-let pendingResize=false;
+let historyExpanded = true;
+let viewMode = VIEW.BOUNDARIES;
+let renderWorker = null;
+let renderVersion = 0;
+let canvasWidth = 0;
+let canvasHeight = 0;
+let pointer = null;
 
 let frozenSuggestions = [];
 let suggestionIndex = -1;
 let suggestionsFrozen = false;
 
-function loadSamples(){
+function loadSamples() {
   try {
-    const data=JSON.parse(localStorage.getItem('chromaSamples')||'[]');
-    return Array.isArray(data)?data.filter(s=>
-      Number.isFinite(s.h)&&Number.isFinite(s.l)&&
-      typeof s.name==='string'&&typeof s.hex==='string'
-    ): [];
-  }catch{return []}
+    const data = JSON.parse(localStorage.getItem('chromaSamples') || '[]');
+    return Array.isArray(data) ? data.filter(sample =>
+      Number.isFinite(sample.h) &&
+      Number.isFinite(sample.l) &&
+      typeof sample.name === 'string' &&
+      typeof sample.hex === 'string'
+    ) : [];
+  } catch {
+    return [];
+  }
 }
 
-let historyExpanded=true;
-
-$('historyToggle').onclick=()=>{
-  historyExpanded=!historyExpanded;
-  $('historyArrow').textContent=
-    (historyExpanded?'▼':'▶')+' HISTORY';
-  renderStats();
-};
-
-function save(){
-  try{localStorage.setItem('chromaSamples',JSON.stringify(samples))}
-  catch(e){console.warn('Could not save samples',e)}
+function save() {
+  try {
+    localStorage.setItem('chromaSamples', JSON.stringify(samples));
+  } catch (error) {
+    console.warn('Could not save samples', error);
+  }
 }
 
-function rgb(h,l,s){
-  s/=100;l/=100;
-  const a=s*Math.min(l,1-l);
-  const f=n=>{
-    const k=(n+h/30)%12;
-    const c=l-a*Math.max(-1,Math.min(k-3,9-k,1));
-    return Math.round(255*c);
+function rgb(h, l, saturation = SATURATION) {
+  const s = saturation / 100;
+  l /= 100;
+  const a = s * Math.min(l, 1 - l);
+  const channel = offset => {
+    const k = (offset + h / 30) % 12;
+    const value = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+    return Math.round(255 * value);
   };
-  return [f(0),f(8),f(4)];
-}
-function toHex(h,l,s){
-  return '#'+rgb(h,l,s).map(v=>v.toString(16).padStart(2,'0')).join('');
-}
-function hsl(h,l,s=SATURATION){
-  return `hsl(${h},${s}%,${l}%)`;
-}
-function rand(){
-  return {h:Math.random()*360,l:Math.random()*100};
+  return [channel(0), channel(8), channel(4)];
 }
 
-function createWorker(){
-  const source=`
-  self.onmessage=e=>{
-    const {samples,version}=e.data;
-    const W=${REGION_WIDTH},H=${REGION_HEIGHT};
-    const result=new Uint8Array(W*H);
-    if(!samples.length){
-      self.postMessage({result,version},[result.buffer]);return;
+function toHex(h, l) {
+  return '#' + rgb(h, l).map(value => value.toString(16).padStart(2, '0')).join('');
+}
+
+function hsl(h, l) {
+  return `hsl(${h}, ${SATURATION}%, ${l}%)`;
+}
+
+function randomColor() {
+  return { h: Math.random() * 360, l: Math.random() * 100 };
+}
+
+function categoryNames() {
+  return [...new Set(samples.map(sample => sample.name))];
+}
+
+function createRenderWorker() {
+  const source = `
+    'use strict';
+
+    let gradientCanvas;
+    let categoryCanvas;
+    let samplesCanvas;
+    let gradientContext;
+    let categoryContext;
+    let samplesContext;
+    let width = 0;
+    let height = 0;
+    let samples = [];
+    let categoryColors = [];
+    let owners = null;
+    let mode = 'boundaries';
+    let latestVersion = 0;
+
+    const SATURATION = 100;
+
+    function rgb(h, l, saturation = SATURATION) {
+      const s = saturation / 100;
+      l /= 100;
+      const a = s * Math.min(l, 1 - l);
+      const channel = offset => {
+        const k = (offset + h / 30) % 12;
+        const value = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+        return Math.round(255 * value);
+      };
+      return [channel(0), channel(8), channel(4)];
     }
-    const n=samples.length;
-    const hue=new Float32Array(n);
-    const light=new Float32Array(n);
-    const names=new Map();
-    samples.forEach((s,i)=>{
-      hue[i]=s.h;
-      light[i]=s.l;
-      if(!names.has(s.name))names.set(s.name,names.size+1);
-    });
-    for(let y=0;y<H;y++){
-      const l=100-y/H*100;
-      for(let x=0;x<W;x++){
-        const h=x/W*360;
-        let best=Infinity,bestId=0;
-        for(let i=0;i<n;i++){
-          let dh=Math.abs(h-hue[i]);
-          dh=Math.min(dh,360-dh);
-          // Cylindrical hue/lightness distance.
-          dh*=Math.max(.15,Math.sin((100-l)*Math.PI/180));
-          const dl=(l-light[i])*1.8;
-          const d=dh*dh+dl*dl;
-          if(d<best){
-            best=d;
-            bestId=names.get(samples[i].name);
+
+    function drawGradient() {
+      const image = gradientContext.createImageData(width, height);
+      const data = image.data;
+
+      for (let y = 0; y < height; y++) {
+        const lightness = 100 - y / height * 100;
+        for (let x = 0; x < width; x++) {
+          const color = rgb(x / width * 360, lightness);
+          const pixel = (y * width + x) * 4;
+          data[pixel] = color[0];
+          data[pixel + 1] = color[1];
+          data[pixel + 2] = color[2];
+          data[pixel + 3] = 255;
+        }
+      }
+
+      gradientContext.putImageData(image, 0, 0);
+    }
+
+    function computeOwners() {
+      owners = new Int32Array(width * height);
+      owners.fill(-1);
+      categoryColors = [];
+
+      const categoryIds = new Map();
+      samples = samples.map(sample => {
+        if (!categoryIds.has(sample.name)) {
+          categoryIds.set(sample.name, categoryIds.size);
+          categoryColors.push(sample.hex);
+        }
+        return { ...sample, categoryId: categoryIds.get(sample.name) };
+      });
+
+      if (!samples.length) return;
+
+      for (let y = 0; y < height; y++) {
+        const lightness = 100 - y / height * 100;
+        const lightnessScale = Math.max(.15, Math.sin((100 - lightness) * Math.PI / 180));
+        for (let x = 0; x < width; x++) {
+          const hue = x / width * 360;
+          let bestDistance = Infinity;
+          let bestOwner = -1;
+
+          for (const sample of samples) {
+            let hueDistance = Math.abs(hue - sample.h);
+            hueDistance = Math.min(hueDistance, 360 - hueDistance) * lightnessScale;
+            const lightnessDistance = (lightness - sample.l) * 1.8;
+            const distance = hueDistance * hueDistance + lightnessDistance * lightnessDistance;
+
+            if (distance < bestDistance) {
+              bestDistance = distance;
+              bestOwner = sample.categoryId;
+            }
+          }
+
+          owners[y * width + x] = bestOwner;
+        }
+      }
+    }
+
+    function drawCategoryOverlay() {
+      categoryContext.clearRect(0, 0, width, height);
+
+      if (mode === 'regions') {
+        const image = categoryContext.createImageData(width, height);
+        const data = image.data;
+        const palette = categoryColors.map(hex => {
+          const value = Number.parseInt(hex.slice(1), 16);
+          return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+        });
+
+        for (let i = 0; i < owners.length; i++) {
+          const owner = owners[i];
+          const pixel = i * 4;
+          const color = owner >= 0 && palette[owner] ? palette[owner] : [17, 18, 22];
+          data[pixel] = color[0];
+          data[pixel + 1] = color[1];
+          data[pixel + 2] = color[2];
+          data[pixel + 3] = 255;
+        }
+
+        categoryContext.putImageData(image, 0, 0);
+        return;
+      }
+
+      if (!samples.length) return;
+
+      categoryContext.beginPath();
+      for (let y = 0; y < height; y++) {
+        const row = y * width;
+        for (let x = 0; x < width; x++) {
+          const owner = owners[row + x];
+          if (x < width - 1 && owner !== owners[row + x + 1]) {
+            categoryContext.moveTo(x + 1, y);
+            categoryContext.lineTo(x + 1, y + 1);
+          }
+          if (y < height - 1 && owner !== owners[row + width + x]) {
+            categoryContext.moveTo(x, y + 1);
+            categoryContext.lineTo(x + 1, y + 1);
           }
         }
-        result[y*W+x]=bestId;
       }
+
+      const gradient = categoryContext.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, '#000000');
+      gradient.addColorStop(1, '#ffffff');
+      categoryContext.strokeStyle = gradient;
+      categoryContext.lineWidth = Math.max(1, width / 720);
+      categoryContext.stroke();
     }
-    self.postMessage({
-      result:result.buffer,version,
-      names:[...names.keys()],
-      colors:[...names.keys()].map(name => {
-        const sample=samples.find(s => s.name === name);
-        return sample ? sample.hex : '#777777';
-      })
-    },[result.buffer]);
-  };`;
-  const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
-  const w=new Worker(url);
-  URL.revokeObjectURL(url);
-  return w;
-}
 
-try{
-  worker=createWorker();
-  worker.onmessage=e=>{
-    if(e.data.version!==workerVersion)return;
-    drawRegionResult(
-      e.data.result,
-      e.data.names || [],
-      e.data.colors || []
-    );
-  };
-  worker.onerror=()=>{
-    $('workerStatus').textContent='Region worker unavailable';
-  };
-}catch(e){
-  $('workerStatus').textContent='Worker unavailable';
-}
+    function drawSamplePoints() {
+      samplesContext.clearRect(0, 0, width, height);
+      const gradient = samplesContext.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, '#000000');
+      gradient.addColorStop(1, '#ffffff');
 
-function getBoundaryLayer() {
-  const key = JSON.stringify(
-    samples.map(s => [s.h, s.l, s.name])
-  );
+      samplesContext.lineWidth = Math.max(1, width / 960);
+      samplesContext.strokeStyle = gradient;
 
-  // Reuse the calculation unless samples have changed.
-  if (boundaryLayer && boundaryLayerKey === key) {
-    return boundaryLayer;
-  }
-
-  boundaryLayerKey = key;
-
-  if (!samples.length) {
-    boundaryLayer = null;
-    return null;
-  }
-
-  const W = BOUNDARY_WIDTH;
-  const H = BOUNDARY_HEIGHT;
-
-  const categories = new Map();
-
-  samples.forEach(s => {
-    if (!categories.has(s.name)) {
-      categories.set(s.name, categories.size);
-    }
-  });
-
-  const owners = new Int32Array(W * H);
-
-  for (let y = 0; y < H; y++) {
-    const l = 100 - y / H * 100;
-
-    for (let x = 0; x < W; x++) {
-      const h = x / W * 360;
-
-      let best = Infinity;
-      let bestId = -1;
-
-      for (const s of samples) {
-        let dh = Math.abs(h - s.h);
-        dh = Math.min(dh, 360 - dh);
-        dh *= Math.max(
-          0.15,
-          Math.sin((100 - l) * Math.PI / 180)
+      for (const sample of samples) {
+        samplesContext.beginPath();
+        samplesContext.arc(
+          sample.h / 360 * width,
+          (100 - sample.l) / 100 * height,
+          Math.max(3, width / 240),
+          0,
+          Math.PI * 2
         );
+        samplesContext.fillStyle = sample.hex;
+        samplesContext.fill();
+        samplesContext.stroke();
+      }
+    }
 
-        const dl = (l - s.l) * 1.8;
-        const d = dh * dh + dl * dl;
+    function renderData() {
+      computeOwners();
+      drawCategoryOverlay();
+      drawSamplePoints();
+    }
 
-        if (d < best) {
-          best = d;
-          bestId = categories.get(s.name);
+    function resize(nextWidth, nextHeight) {
+      if (!nextWidth || !nextHeight || (nextWidth === width && nextHeight === height)) return;
+      width = nextWidth;
+      height = nextHeight;
+
+      for (const canvas of [gradientCanvas, categoryCanvas, samplesCanvas]) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      drawGradient();
+      renderData();
+      self.postMessage({ type: 'rendered', version: latestVersion });
+    }
+
+    self.onmessage = event => {
+      const message = event.data;
+
+      if (message.type === 'init') {
+        [gradientCanvas, categoryCanvas, samplesCanvas] = message.canvases;
+        gradientContext = gradientCanvas.getContext('2d', { alpha: false });
+        categoryContext = categoryCanvas.getContext('2d');
+        samplesContext = samplesCanvas.getContext('2d');
+        self.postMessage({ type: 'ready' });
+        return;
+      }
+
+      if (message.type === 'resize') {
+        resize(message.width, message.height);
+        return;
+      }
+
+      if (message.type === 'samples') {
+        samples = message.samples;
+        latestVersion = message.version;
+        if (width && height) {
+          renderData();
+          self.postMessage({ type: 'rendered', version: latestVersion });
         }
+        return;
       }
 
-      owners[y * W + x] = bestId;
-    }
-  }
-
-  const canvas = document.createElement('canvas');
-  canvas.width = W;
-  canvas.height = H;
-
-  const c = canvas.getContext('2d');
-
-  c.beginPath();
-
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const i = y * W + x;
-      const owner = owners[i];
-
-      if (x < W - 1 && owner !== owners[i + 1]) {
-        c.moveTo(x + 1, y);
-        c.lineTo(x + 1, y + 1);
+      if (message.type === 'mode') {
+        mode = message.mode;
+        drawCategoryOverlay();
+        self.postMessage({ type: 'rendered', version: latestVersion });
       }
+    };
+  `;
 
-      if (y < H - 1 && owner !== owners[i + W]) {
-        c.moveTo(x, y + 1);
-        c.lineTo(x + 1, y + 1);
-      }
-    }
-  }
-
-  const gradient = c.createLinearGradient(0, 0, 0, H);
-  gradient.addColorStop(0, '#000000');
-  gradient.addColorStop(1, '#ffffff');
-
-  c.strokeStyle = gradient;
-  c.lineWidth = 2;
-  c.stroke();
-
-  boundaryLayer = canvas;
-  return boundaryLayer;
+  const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
+  const worker = new Worker(url);
+  worker.addEventListener('message', event => {
+    if (event.data.type === 'ready') URL.revokeObjectURL(url);
+  }, { once: true });
+  worker.addEventListener('error', () => URL.revokeObjectURL(url), { once: true });
+  return worker;
 }
 
-function drawSpace(){
-  const rect = space.getBoundingClientRect();
-  const W = BOUNDARY_WIDTH;
-  const H = BOUNDARY_HEIGHT;
-
-  if (!rect.width) return;
-
-  space.width = W;
-  space.height = H;
-
-  // Draw HSL gradient.
-  const image = ctx.createImageData(W, H);
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, H);
-  gradient.addColorStop(0, '#000000');
-  gradient.addColorStop(1, '#ffffff');
-
-
-  for (let y = 0; y < H; y++) {
-    const l = 100 - y / H * 100;
-
-    for (let x = 0; x < W; x++) {
-      const c = rgb(x / W * 360, l, SATURATION);
-      const i = (y * W + x) * 4;
-
-      image.data[i] = c[0];
-      image.data[i + 1] = c[1];
-      image.data[i + 2] = c[2];
-      image.data[i + 3] = 255;
-    }
-  }
-
-  ctx.putImageData(image, 0, 0);
-
-  // Draw smooth, high-resolution category boundaries.
-  const layer = getBoundaryLayer();
-
-  if (layer) {
-    ctx.save();
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(layer, 0, 0, W, H);
-    ctx.restore();
-  }
-
-  // Draw sample markers.
-  samples.forEach((s, i) => {
-    const hovered = i === hoveredSampleIndex;
-
-    ctx.beginPath();
-    ctx.arc(
-      s.h / 360 * W,
-      (100 - s.l) / 100 * H,
-      hovered ? 10 : 3.5,
-      0,
-      Math.PI * 2
-    );
-
-    ctx.fillStyle = s.hex;
-    ctx.fill();
-
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = hovered ? 2.5 : 1.5;
-    ctx.stroke();
-  });
-
-  // Draw currently selected color.
-  if (current) {
-    const x = current.h / 360 * W;
-    const y = (100 - current.l) / 100 * H;
-
-    ctx.beginPath();
-    ctx.arc(x, y, 7, 0, Math.PI * 2);
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(x, y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = gradient;
-    ctx.fill();
-  }
-}
-
-function drawRegionResult(buffer,names,colors){
-  const W=REGION_WIDTH,H=REGION_HEIGHT;
-  const result=new Uint8Array(buffer);
-  const image=rctx.createImageData(W,H);
-  const gradient = rctx.createLinearGradient(0, 0, 0, REGION_HEIGHT);
-
-  gradient.addColorStop(0, '#000000');
-  gradient.addColorStop(1, '#ffffff');
-  const palette=names.map(name=>{
-    const sample=samples.find(s=>s.name===name);
-    const hex=sample?.hex||'#777777';
-    const value=parseInt(hex.replace('#',''),16);
-    return [
-      (value>>16)&255,
-      (value>>8)&255,
-      value&255
-    ];
-  });
-  for(let i=0;i<result.length;i++){
-    const id=result[i]-1;
-    const p=i*4;
-    if(id>=0&&palette[id]){
-      const c=palette[id];
-      image.data[p]=c[0];
-      image.data[p+1]=c[1];
-      image.data[p+2]=c[2];
-    }else{
-      image.data[p]=17;
-      image.data[p+1]=18;
-      image.data[p+2]=22;
-    }
-    image.data[p+3]=255;
-  }
-  // Render the low-resolution Voronoi image across the full canvas.
-  const scaled=document.createElement('canvas');
-  scaled.width=W;
-  scaled.height=H;
-  scaled.getContext('2d').putImageData(image,0,0);
-
-  rctx.clearRect(0,0,regions.width,regions.height);
-  rctx.imageSmoothingEnabled=false;
-  rctx.drawImage(
-    scaled,
-    0,0,W,H,
-    0,0,regions.width,regions.height
-  );
-  // Actual sample colors as markers.
-
-  rctx.strokeStyle=gradient;
-
-  samples.forEach(s=>{
-    rctx.beginPath();
-    rctx.arc(
-      s.h/360*W,
-      (100-s.l)/100*H,
-      10,
-      0,
-      Math.PI*2
-    );
-    rctx.fillStyle=s.hex;
-    rctx.fill();
-    rctx.lineWidth=1.6;
-    rctx.stroke();
-  });
-  $('workerStatus').textContent='Up to date';
-}
-
-function updateRegions(){
-  if(!worker){
-    rctx.fillStyle='#111216';
-    rctx.fillRect(0,0,regions.width,regions.height);
+function initializeRenderer() {
+  if (typeof Worker === 'undefined' || !HTMLCanvasElement.prototype.transferControlToOffscreen) {
+    $('workerStatus').textContent = 'Offscreen workers unavailable';
     return;
   }
-  const version=++workerVersion;
-  $('workerStatus').textContent='Calculating…';
-  // Only send the fields the worker needs.
-  worker.postMessage({
-    samples:samples.map(s=>({h:s.h,l:s.l,name:s.name})),
-    version
+
+  try {
+    renderWorker = createRenderWorker();
+    const canvases = ['gradientLayer', 'categoryLayer', 'samplesLayer']
+      .map(id => $(id).transferControlToOffscreen());
+    renderWorker.onmessage = event => {
+      if (event.data.type === 'rendered' && event.data.version === renderVersion) {
+        $('workerStatus').textContent = 'Up to date';
+      }
+    };
+    renderWorker.onerror = error => {
+      console.error('Color-space worker failed', error);
+      $('workerStatus').textContent = 'Worker error';
+    };
+    renderWorker.postMessage({ type: 'init', canvases }, canvases);
+  } catch (error) {
+    console.error('Could not initialize color-space worker', error);
+    $('workerStatus').textContent = 'Worker unavailable';
+  }
+}
+
+function updateWorkerSamples() {
+  if (!renderWorker) return;
+  renderVersion++;
+  $('workerStatus').textContent = 'Calculating…';
+  renderWorker.postMessage({
+    type: 'samples',
+    version: renderVersion,
+    samples: samples.map(({ h, l, name, hex }) => ({ h, l, name, hex }))
   });
 }
 
-function resizeCanvas(){
-  const rect=regions.getBoundingClientRect();
-  if(!rect.width)return;
-  regions.width=REGION_WIDTH;
-  regions.height=REGION_HEIGHT;
-  rctx.fillStyle='#111216';
-  rctx.fillRect(0,0,regions.width,regions.height);
+function setViewMode(mode) {
+  if (mode === viewMode) return;
+  viewMode = mode;
+  $('boundariesToggle').setAttribute('aria-pressed', String(mode === VIEW.BOUNDARIES));
+  $('regionsToggle').setAttribute('aria-pressed', String(mode === VIEW.REGIONS));
+  if (renderWorker) {
+    $('workerStatus').textContent = 'Updating view…';
+    renderWorker.postMessage({ type: 'mode', mode });
+  }
 }
 
-function renderStats(){
-  const labels=[...new Set(samples.map(s=>s.name))];
-  $('total').textContent=samples.length;
-  $('count').textContent=labels.length;
-  $('regionCount').textContent=labels.length+' CATEGORIES';
+function resizeCanvases(rect) {
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  const width = Math.max(1, Math.round(rect.width * ratio));
+  const height = Math.max(1, Math.round(rect.height * ratio));
+  if (width === canvasWidth && height === canvasHeight) return;
+
+  canvasWidth = width;
+  canvasHeight = height;
+  cursorLayer.width = width;
+  cursorLayer.height = height;
+  renderWorker?.postMessage({ type: 'resize', width, height });
+  refreshPointer();
+}
+
+const resizeObserver = new ResizeObserver(entries => {
+  const entry = entries[0];
+  if (entry) resizeCanvases(entry.contentRect);
+});
+
+function findNearestSample(h, l, rect) {
+  let nearest = -1;
+  let nearestDistance = Infinity;
+
+  for (let i = 0; i < samples.length; i++) {
+    const sample = samples[i];
+    const hueDifference = Math.abs(sample.h - h);
+    const dx = Math.min(hueDifference, 360 - hueDifference) / 360 * rect.width;
+    const dy = Math.abs(sample.l - l) / 100 * rect.height;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance < nearestDistance) {
+      nearest = i;
+      nearestDistance = distance;
+    }
+  }
+
+  return nearestDistance <= SNAP_RADIUS ? nearest : -1;
+}
+
+function colorAtPointer(clientX, clientY, altKey = false) {
+  const rect = space.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+
+  const h = Math.max(0, Math.min(359.99, (clientX - rect.left) / rect.width * 360));
+  const l = Math.max(0, Math.min(100, 100 - (clientY - rect.top) / rect.height * 100));
+  return {
+    h,
+    l,
+    nearest: altKey ? -1 : findNearestSample(h, l, rect),
+    clientX,
+    clientY,
+    altKey
+  };
+}
+
+function drawCursor() {
+  if (!canvasWidth || !canvasHeight) return;
+  cursorContext.clearRect(0, 0, canvasWidth, canvasHeight);
+  if (!pointer) return;
+
+  const snappedSample = !pointer.altKey && pointer.nearest >= 0
+    ? samples[pointer.nearest]
+    : null;
+  const h = snappedSample ? snappedSample.h : pointer.h;
+  const l = snappedSample ? snappedSample.l : pointer.l;
+  const color = snappedSample ? snappedSample.hex : toHex(h, l);
+  const x = h / 360 * canvasWidth;
+  const y = (100 - l) / 100 * canvasHeight;
+  const scale = canvasWidth / Math.max(1, space.getBoundingClientRect().width);
+
+  cursorContext.beginPath();
+  cursorContext.arc(x, y, 10 * scale, 0, Math.PI * 2);
+  cursorContext.fillStyle = color;
+  cursorContext.fill();
+
+  const outline = cursorContext.createLinearGradient(0, 0, 0, canvasHeight);
+  outline.addColorStop(0, '#000000');
+  outline.addColorStop(1, '#ffffff');
+  cursorContext.strokeStyle = outline;
+  cursorContext.lineWidth = 2.5 * scale;
+  cursorContext.stroke();
+}
+
+function updatePointer(clientX, clientY, altKey = false) {
+  pointer = colorAtPointer(clientX, clientY, altKey);
+  drawCursor();
+}
+
+function refreshPointer() {
+  if (pointer) updatePointer(pointer.clientX, pointer.clientY, pointer.altKey);
+}
+
+function updateCurrentPreview() {
+  if (!current) return;
+  $('sample').style.background = hsl(current.h, current.l);
+  $('hex').textContent = toHex(current.h, current.l);
+}
+
+function selectColor(h, l, sampleIndex = null) {
+  editingSampleIndex = sampleIndex;
+  current = { h, l };
+  categoryInput.value = sampleIndex === null ? '' : samples[sampleIndex].name;
+  suggestionsBox.hidden = true;
+  updateCurrentPreview();
+  categoryInput.focus();
+  categoryInput.select();
+}
+
+function selectSample(index) {
+  const sample = samples[index];
+  if (!sample) return;
+  selectColor(sample.h, sample.l, index);
+}
+
+function renderCategories() {
+  const names = categoryNames();
+  $('total').textContent = samples.length;
+  $('count').textContent = names.length;
+  $('regionCount').textContent = `${names.length} CATEGORIES`;
   $('categoryList').replaceChildren();
-  labels.forEach((name,i)=>{
-    const tag=document.createElement('div');
-    tag.className='tag';
-    const dot=document.createElement('span');
-    dot.className='dot';
-    const representative=samples.find(s=>s.name===name);
-    dot.style.background=representative?.hex||'#777777';
-    const label=document.createElement('span');
-    label.textContent=name;
-    const rename=document.createElement('button');
-    rename.textContent='✎';
-    rename.title='Rename category';
-    rename.style.padding='2px 6px';
-    rename.onclick=() => {
-      const newName=prompt('Rename category:',name);
-      if(!newName || !newName.trim()) return;
-      const normalized=newName.trim().toLowerCase();
-      samples.forEach(s=>{
-        if(s.name===name) s.name=normalized;
+
+  for (const name of names) {
+    const representative = samples.find(sample => sample.name === name);
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.style.background = representative?.hex || '#777777';
+
+    const label = document.createElement('span');
+    label.className = 'tag-label';
+    label.textContent = name;
+
+    const rename = document.createElement('button');
+    rename.className = 'rename';
+    rename.type = 'button';
+    rename.textContent = '✎';
+    rename.title = `Rename ${name}`;
+    rename.setAttribute('aria-label', `Rename category ${name}`);
+    rename.addEventListener('click', () => {
+      const nextName = prompt('Rename category:', name);
+      if (!nextName?.trim()) return;
+      const normalized = nextName.trim().toLowerCase();
+      samples.forEach(sample => {
+        if (sample.name === name) sample.name = normalized;
       });
       save();
-      render();
-    };
-    tag.append(dot,label,rename);
+      renderData();
+    });
+
+    tag.append(dot, label, rename);
     $('categoryList').append(tag);
-  });
+  }
+}
+
+function renderHistory() {
+  $('historyContent').hidden = !historyExpanded;
+  $('historyToggle').setAttribute('aria-expanded', String(historyExpanded));
+  $('historyArrow').textContent = `${historyExpanded ? '▼' : '▶'} HISTORY`;
   $('history').replaceChildren();
-  samples.slice(historyExpanded ? 0 : -40).reverse().forEach(s=>{
-    const el=document.createElement('div');
-    el.className='history-item';
-    el.title=`${s.name} · ${s.hex} — Click to edit`;
-    el.style.background=s.hex;
-    el.style.cursor='pointer';
 
-    el.onclick=()=>{
-      const index=samples.indexOf(s);
-      if(index===-1)return;
-
-      editingSampleIndex=index;
-
-      current={
-        h:s.h,
-        l:s.l
-      };
-
-      $('category').value=s.name;
-      $('sample').style.background=hsl(current.h,current.l);
-      $('hex').textContent=toHex(current.h,current.l,SATURATION);
-
-      $('suggestions').hidden=true;
-
-      $('category').focus();
-      $('category').select();
-
-      drawSpace();
-    };
-
-    $('history').append(el);
-  });
+  const start = historyExpanded ? 0 : Math.max(0, samples.length - 40);
+  for (let index = samples.length - 1; index >= start; index--) {
+    const sample = samples[index];
+    const item = document.createElement('button');
+    item.className = 'history-item';
+    item.type = 'button';
+    item.style.background = sample.hex;
+    item.title = `${sample.name} · ${sample.hex} — Click to edit`;
+    item.setAttribute('aria-label', `Edit ${sample.name}, ${sample.hex}`);
+    item.addEventListener('click', () => selectSample(index));
+    $('history').append(item);
+  }
 }
 
-function render(){
-  drawSpace();
-  renderStats();
-  resizeCanvas();
-  updateRegions();
+function renderData() {
+  renderCategories();
+  renderHistory();
+  updateWorkerSamples();
+  refreshPointer();
 }
 
-function next(){
-  current=rand();
-  $('sample').style.background=hsl(current.h,current.l);
-  $('hex').textContent=toHex(current.h,current.l,SATURATION);
-  $('category').value='';
-  $('suggestions').hidden=true;
-  $('progress').textContent='SAMPLE '+String(sequence).padStart(3,'0');
-  drawSpace();
-  $('category').focus({preventScroll:true});
+function next() {
+  current = randomColor();
+  updateCurrentPreview();
+  categoryInput.value = '';
+  unfreezeSuggestions();
+  $('progress').textContent = `SAMPLE ${String(sequence).padStart(3, '0')}`;
   editingSampleIndex = null;
+  categoryInput.focus({ preventScroll: true });
 }
 
 function categorize() {
-  const name = $('category').value.trim().toLowerCase();
-
+  const name = categoryInput.value.trim().toLowerCase();
   if (!current) return;
 
   const entry = {
     h: current.h,
     l: current.l,
     name,
-    hex: toHex(current.h, current.l, SATURATION),
+    hex: toHex(current.h, current.l),
     time: Date.now()
   };
 
-  if (
-    editingSampleIndex !== null &&
-    samples[editingSampleIndex]
-  ) {
-      if (!name) {
-        // Remove the existing sample if its name is empty.
-        samples.splice(editingSampleIndex, 1);
-      } else {
-        // Update the existing sample instead of duplicating it.
-        samples[editingSampleIndex] = {
-          ...samples[editingSampleIndex],
-          ...entry
-        };
-
-        editingSampleIndex = null;
+  if (editingSampleIndex !== null && samples[editingSampleIndex]) {
+    if (name) {
+      samples[editingSampleIndex] = { ...samples[editingSampleIndex], ...entry };
+    } else {
+      samples.splice(editingSampleIndex, 1);
     }
   } else {
-    if (!name) return; //. Don't create empty sample
-    // Create a new sample.
+    if (!name) return;
     samples.push(entry);
     sequence++;
   }
 
+  editingSampleIndex = null;
   save();
-  renderStats();
-  updateRegions();
-  drawSpace();
+  renderData();
   next();
 }
 
-$('submit').onclick=categorize;
-$('next').onclick=()=>{sequence++;next()};
+function renderSuggestions(names, selected = -1) {
+  suggestionsBox.replaceChildren();
+  names.forEach((name, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = name;
+    button.setAttribute('aria-selected', String(index === selected));
+    button.addEventListener('click', () => {
+      categoryInput.value = name;
+      unfreezeSuggestions();
+      categoryInput.focus();
+    });
+    suggestionsBox.append(button);
+  });
+  suggestionsBox.hidden = names.length === 0;
+}
 
-$('category').addEventListener('keydown', e => {
-  const box = $('suggestions');
-
-  if (e.key === 'Enter') {
-    e.preventDefault();
-
-    if (e.ctrlKey) {
-      // Skip current sample.
-      sequence++;
-      next();
-      return;
-    }
-
-    // Normal Enter submits.
-    if (suggestionsFrozen && suggestionIndex >= 0) {
-      $('category').value = frozenSuggestions[suggestionIndex];
-    }
-
-    categorize();
-    return;
-  }
-
-  if (e.key === 'Tab' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-    if (!frozenSuggestions.length && !suggestionsFrozen) {
-      freezeSuggestions();
-    }
-
-    if (!frozenSuggestions.length) return;
-
-    e.preventDefault();
-
-    if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)) {
-      suggestionIndex = (suggestionIndex + 1) % frozenSuggestions.length;
-    } else {
-      suggestionIndex = (
-        suggestionIndex - 1 + frozenSuggestions.length
-      ) % frozenSuggestions.length;
-    }
-
-    showSuggestionSelection();
-    return;
-  }
-
-  if (e.key === 'Escape') {
-    unfreezeSuggestions();
-  }
-});
+function matchingCategories() {
+  const value = categoryInput.value.trim().toLowerCase();
+  return categoryNames().filter(name => value && name.includes(value)).slice(0, 6);
+}
 
 function freezeSuggestions() {
-  const value = $('category').value.trim().toLowerCase();
-
-  frozenSuggestions = [...new Set(samples.map(s => s.name))]
-    .filter(name => value && name.includes(value))
-    .slice(0, 6);
-
+  frozenSuggestions = matchingCategories();
   suggestionsFrozen = true;
   suggestionIndex = -1;
+  renderSuggestions(frozenSuggestions);
 }
 
 function showSuggestionSelection() {
-  const box = $('suggestions');
-  box.replaceChildren();
-
-  frozenSuggestions.forEach((name, i) => {
-    const btn = document.createElement('button');
-
-    btn.textContent = name;
-
-    if (i === suggestionIndex) {
-      btn.style.background = '#41454c';
-      btn.style.color = '#c6f36a';
-    }
-
-    btn.onclick = () => {
-      $('category').value = name;
-      unfreezeSuggestions();
-      $('category').focus();
-    };
-
-    box.append(btn);
-  });
-
-  box.hidden = frozenSuggestions.length === 0;
-
-  if (suggestionIndex >= 0) {
-    $('category').value = frozenSuggestions[suggestionIndex];
-  }
+  renderSuggestions(frozenSuggestions, suggestionIndex);
+  if (suggestionIndex >= 0) categoryInput.value = frozenSuggestions[suggestionIndex];
 }
 
 function unfreezeSuggestions() {
   suggestionsFrozen = false;
   frozenSuggestions = [];
   suggestionIndex = -1;
-  $('suggestions').hidden = true;
+  suggestionsBox.hidden = true;
 }
 
-$('category').addEventListener('input', () => {
-  // Typing starts a fresh suggestion search.
+$('boundariesToggle').addEventListener('click', () => setViewMode(VIEW.BOUNDARIES));
+$('regionsToggle').addEventListener('click', () => setViewMode(VIEW.REGIONS));
+$('submit').addEventListener('click', categorize);
+$('next').addEventListener('click', () => {
+  sequence++;
+  next();
+});
+
+categoryInput.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    if (event.ctrlKey) {
+      sequence++;
+      next();
+      return;
+    }
+    if (suggestionsFrozen && suggestionIndex >= 0) {
+      categoryInput.value = frozenSuggestions[suggestionIndex];
+    }
+    categorize();
+    return;
+  }
+
+  if (event.key === 'Tab' || event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    if (!suggestionsFrozen) freezeSuggestions();
+    if (!frozenSuggestions.length) return;
+
+    event.preventDefault();
+    const direction = event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey) ? -1 : 1;
+    suggestionIndex = (suggestionIndex + direction + frozenSuggestions.length) % frozenSuggestions.length;
+    showSuggestionSelection();
+    return;
+  }
+
+  if (event.key === 'Escape') unfreezeSuggestions();
+});
+
+categoryInput.addEventListener('input', () => {
   suggestionsFrozen = false;
   frozenSuggestions = [];
   suggestionIndex = -1;
-
-  const value = $('category').value.trim().toLowerCase();
-
-  const matches = [...new Set(samples.map(s => s.name))]
-    .filter(name => value && name.includes(value))
-    .slice(0, 6);
-
-  const box = $('suggestions');
-  box.replaceChildren();
-
-  matches.forEach(name => {
-    const btn = document.createElement('button');
-
-    btn.textContent = name;
-
-    btn.onclick = () => {
-      $('category').value = name;
-      unfreezeSuggestions();
-      $('category').focus();
-    };
-
-    box.append(btn);
-  });
-
-  box.hidden = !matches.length;
+  renderSuggestions(matchingCategories());
 });
 
-$('reset').onclick=()=>{
-  if(!confirm('Delete all samples and start over?'))return;
-  samples=[];
-  sequence=1;
+$('historyToggle').addEventListener('click', () => {
+  historyExpanded = !historyExpanded;
+  renderHistory();
+});
+
+$('reset').addEventListener('click', () => {
+  if (!confirm('Delete all samples and start over?')) return;
+  samples = [];
+  sequence = 1;
+  editingSampleIndex = null;
   save();
-  render();
+  renderData();
   next();
-};
+});
 
-// Click anywhere on the color plane to inspect that color.
-space.addEventListener('click', e => {
-  const rect = space.getBoundingClientRect();
+cursorLayer.addEventListener('pointermove', event => {
+  updatePointer(event.clientX, event.clientY, event.altKey);
+});
 
-  const h = Math.max(
-    0,
-    Math.min(359.99,
-      (e.clientX - rect.left) / rect.width * 360
-    )
-  );
+cursorLayer.addEventListener('pointerleave', () => {
+  pointer = null;
+  drawCursor();
+});
 
-  const l = Math.max(
-    0,
-    Math.min(100,
-      100 - (e.clientY - rect.top) / rect.height * 100
-    )
-  );
-
-  // Find the nearest existing sample.
-  let nearest = -1;
-  let nearestDistance = Infinity;
-
-  const SNAP_RADIUS = 10;
-
-  samples.forEach((s, i) => {
-    let dx = Math.abs(s.h - h) / 360 * rect.width;
-
-    // Account for hue wrapping at 0° / 360°.
-    dx = Math.min(dx, rect.width - dx);
-
-    const dy = Math.abs(s.l - l) / 100 * rect.height;
-
-    const distance = Math.hypot(dx, dy);
-
-    if (distance < nearestDistance) {
-      nearestDistance = distance;
-      nearest = i;
-    }
-  });
-
-  if (
-    !e.altKey &&
-    nearest !== -1 &&
-    nearestDistance <= SNAP_RADIUS
-  ) {
-    // Snap to the exact existing sample.
-    editingSampleIndex = nearest;
-
-    current = {
-      h: samples[nearest].h,
-      l: samples[nearest].l
-    };
-
-    // Load its existing category.
-    $('category').value = samples[nearest].name;
-
+cursorLayer.addEventListener('click', event => {
+  const position = colorAtPointer(event.clientX, event.clientY, event.altKey);
+  if (!position) return;
+  if (position.nearest >= 0) {
+    selectSample(position.nearest);
   } else {
-    // Select a new position.
-    editingSampleIndex = null;
-
-    current = { h, l };
-
-    $('category').value = '';
+    selectColor(position.h, position.l);
   }
-  $('category').focus();
-  $('category').select();
-
-  $('suggestions').hidden = true;
-
-  $('sample').style.background = hsl(current.h, current.l);
-  $('hex').textContent = toHex(
-    current.h,
-    current.l,
-    SATURATION
-  );
-
-  drawSpace();
+  updatePointer(event.clientX, event.clientY, event.altKey);
 });
 
-let resizeTimer;
-window.addEventListener('resize',()=>{
-  clearTimeout(resizeTimer);
-  resizeTimer=setTimeout(()=>{
-    drawSpace();
-    resizeCanvas();
-    updateRegions();
-  },100);
-});
-
-space.addEventListener('mousemove', e => {
-  const rect = space.getBoundingClientRect();
-
-  const h = (e.clientX - rect.left) / rect.width * 360;
-  const l = 100 - (e.clientY - rect.top) / rect.height * 100;
-
-  let nearest = -1;
-  let nearestDistance = Infinity;
-
-  const SNAP_RADIUS = 10;
-
-  samples.forEach((s, i) => {
-    let dx = Math.abs(s.h - h) / 360 * rect.width;
-    dx = Math.min(dx, rect.width - dx);
-
-    const dy = Math.abs(s.l - l) / 100 * rect.height;
-    const distance = Math.hypot(dx, dy);
-
-    if (distance < nearestDistance) {
-      nearestDistance = distance;
-      nearest = i;
-    }
-  });
-
-  const nextHovered =
-    !e.altKey && nearestDistance <= SNAP_RADIUS
-      ? nearest
-      : -1;
-
-  if (nextHovered !== hoveredSampleIndex) {
-    hoveredSampleIndex = nextHovered;
-    drawSpace();
+window.addEventListener('keydown', event => {
+  if (event.key === 'Alt' && pointer && !pointer.altKey) {
+    updatePointer(pointer.clientX, pointer.clientY, true);
   }
 });
 
-space.addEventListener('mouseleave', () => {
-  hoveredSampleIndex = -1;
-  drawSpace();
-});
-
-window.addEventListener('keydown', e => {
-  if (e.key === 'Alt') {
-    hoveredSampleIndex = -1;
-    drawSpace();
+window.addEventListener('keyup', event => {
+  if (event.key === 'Alt' && pointer && pointer.altKey) {
+    updatePointer(pointer.clientX, pointer.clientY, false);
   }
 });
 
-window.addEventListener('keyup', e => {
-  if (e.key === 'Alt') {
-    drawSpace();
-  }
+window.addEventListener('blur', () => {
+  if (pointer?.altKey) updatePointer(pointer.clientX, pointer.clientY, false);
 });
 
-// Convert a position on the region map into HSL coordinates.
-function getRegionCoordinates(e) {
-  const rect = regions.getBoundingClientRect();
-
-  const h = Math.max(
-    0,
-    Math.min(
-      359.99,
-      (e.clientX - rect.left) / rect.width * 360
-    )
-  );
-
-  const l = Math.max(
-    0,
-    Math.min(
-      100,
-      100 - (e.clientY - rect.top) / rect.height * 100
-    )
-  );
-
-  return { h, l, rect };
-}
-
-
-// Find the nearest existing sample within SNAP_RADIUS.
-function findNearestRegionSample(h, l, rect) {
-  let nearest = -1;
-  let nearestDistance = Infinity;
-
-  const SNAP_RADIUS = 10;
-
-  samples.forEach((s, i) => {
-    let dx = Math.abs(s.h - h) / 360 * rect.width;
-
-    // Account for hue wrapping.
-    dx = Math.min(dx, rect.width - dx);
-
-    const dy = Math.abs(s.l - l) / 100 * rect.height;
-
-    const distance = Math.hypot(dx, dy);
-
-    if (distance < nearestDistance) {
-      nearestDistance = distance;
-      nearest = i;
-    }
-  });
-
-  return nearestDistance <= SNAP_RADIUS ? nearest : -1;
-}
-
-const regionCursor = $('regionCursor');
-
-regions.addEventListener('mousemove', e => {
-  const { h, l, rect } = getRegionCoordinates(e);
-
-  const nearest = e.altKey
-    ? -1
-    : findNearestRegionSample(h, l, rect);
-
-  let displayH = h;
-  let displayL = l;
-  let color = toHex(h, l, SATURATION);
-
-  if (nearest !== -1) {
-    displayH = samples[nearest].h;
-    displayL = samples[nearest].l;
-    color = samples[nearest].hex;
-  }
-
-  const x = displayH / 360 * rect.width;
-  const y = (100 - displayL) / 100 * rect.height;
-
-  regionCursor.style.display = 'block';
-  regionCursor.style.left = `${x}px`;
-  regionCursor.style.top = `${y}px`;
-  regionCursor.style.background = color;
-});
-
-regions.addEventListener('mouseleave', () => {
-  regionCursor.style.display = 'none';
-});
-
-
-// Select a color by clicking the region map.
-regions.addEventListener('click', e => {
-  const { h, l, rect } = getRegionCoordinates(e);
-
-  const nearest = e.altKey
-    ? -1
-    : findNearestRegionSample(h, l, rect);
-
-  if (nearest !== -1) {
-    // Select and edit an existing sample.
-    editingSampleIndex = nearest;
-
-    current = {
-      h: samples[nearest].h,
-      l: samples[nearest].l
-    };
-
-    $('category').value = samples[nearest].name;
-
-  } else {
-    // Select a new color.
-    editingSampleIndex = null;
-
-    current = { h, l };
-
-    $('category').value = '';
-    $('category').focus();
-    $('category').select();
-  }
-
-  $('suggestions').hidden = true;
-
-  $('sample').style.background = hsl(
-    current.h,
-    current.l
-  );
-
-  $('hex').textContent = toHex(
-    current.h,
-    current.l,
-    SATURATION
-  );
-
-  drawSpace();
-
-  // Keep both maps synchronized.
-  updateRegionHoverFromSelection();
-});
-
-// Alt disables snapping while hovering.
-window.addEventListener('keydown', e => {
-  if (e.key === 'Alt' && regionHover) {
-    regionHover = null;
-    drawRegionResultFromCache();
-  }
-});
-
-window.addEventListener('keyup', e => {
-  if (e.key === 'Alt') {
-    regionHover = null;
-    drawRegionResultFromCache();
-  }
-});
-
-function drawRegionResultFromCache() {
-  if (!regionImageCache) return;
-
-  rctx.putImageData(regionImageCache, 0, 0);
-
-  const gradient = rctx.createLinearGradient(
-    0, 0, 0, REGION_HEIGHT
-  );
-
-  gradient.addColorStop(0, '#000000');
-  gradient.addColorStop(1, '#ffffff');
-
-  // Sample markers
-  samples.forEach(s => {
-    rctx.beginPath();
-    rctx.arc(
-      s.h / 360 * REGION_WIDTH,
-      (100 - s.l) / 100 * REGION_HEIGHT,
-      10, 0, Math.PI * 2
-    );
-
-    rctx.fillStyle = s.hex;
-    rctx.fill();
-    rctx.strokeStyle = gradient;
-    rctx.lineWidth = 1.6;
-    rctx.stroke();
-  });
-
-  // Hover indicator
-  if (regionHover) {
-    rctx.beginPath();
-    rctx.arc(
-      regionHover.x,
-      regionHover.y,
-      8,
-      0,
-      Math.PI * 2
-    );
-
-    rctx.fillStyle = regionHover.color;
-    rctx.fill();
-
-    rctx.strokeStyle = gradient;
-    rctx.lineWidth = 3;
-    rctx.stroke();
-  }
-}
-
-function updateRegionHoverFromSelection() {
-  regionHover = null;
-  drawRegionResultFromCache();
-}
-
-render();
+initializeRenderer();
+resizeObserver.observe(space);
+renderData();
 next();
 </script>
 </body>
