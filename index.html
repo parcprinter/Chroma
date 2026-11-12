@@ -26,7 +26,7 @@ h1{font-size:32px;letter-spacing:-1.5px;margin:5px 0}
 .panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-weight:650}
 canvas{width:100%;display:block;border-radius:6px}
 #space{aspect-ratio:1.5;cursor:crosshair}
-#regions{aspect-ratio:1.5}
+#regions{aspect-ratio:1.5;width:100%;height:auto;}
 .legend{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:10px}
 .control{margin-top:20px}
 label{display:block;color:var(--muted);margin-bottom:7px;font-size:12px}
@@ -218,7 +218,11 @@ function createWorker(){
     }
     self.postMessage({
       result:result.buffer,version,
-      names:[...names.keys()]
+      names:[...names.keys()],
+      colors:[...names.keys()].map(name => {
+        const sample=samples.find(s => s.name === name);
+        return sample ? sample.hex : '#777777';
+      })
     },[result.buffer]);
   };`;
   const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
@@ -231,7 +235,11 @@ try{
   worker=createWorker();
   worker.onmessage=e=>{
     if(e.data.version!==workerVersion)return;
-    drawRegionResult(e.data.result,e.data.names||[]);
+    drawRegionResult(
+      e.data.result,
+      e.data.names || [],
+      e.data.colors || []
+    );
   };
   worker.onerror=()=>{
     $('workerStatus').textContent='Region worker unavailable';
@@ -265,11 +273,20 @@ function drawSpace(){
   }
 }
 
-function drawRegionResult(buffer,names){
+function drawRegionResult(buffer,names,colors){
   const W=180,H=120;
   const result=new Uint8Array(buffer);
   const image=rctx.createImageData(W,H);
-  const palette=names.map((_,i)=>rgb(i*137.5%360,55,65));
+  const palette=names.map(name=>{
+    const sample=samples.find(s=>s.name===name);
+    const hex=sample?.hex||'#777777';
+    const value=parseInt(hex.replace('#',''),16);
+    return [
+      (value>>16)&255,
+      (value>>8)&255,
+      value&255
+    ];
+  });
   for(let i=0;i<result.length;i++){
     const id=result[i]-1;
     const p=i*4;
@@ -285,13 +302,34 @@ function drawRegionResult(buffer,names){
     }
     image.data[p+3]=255;
   }
-  rctx.putImageData(image,0,0);
-  // Draw sample markers.
+  // Render the low-resolution Voronoi image across the full canvas.
+  const scaled=document.createElement('canvas');
+  scaled.width=W;
+  scaled.height=H;
+  scaled.getContext('2d').putImageData(image,0,0);
+
+  rctx.clearRect(0,0,regions.width,regions.height);
+  rctx.imageSmoothingEnabled=false;
+  rctx.drawImage(
+    scaled,
+    0,0,W,H,
+    0,0,regions.width,regions.height
+  );
+  // Actual sample colors as markers.
   samples.forEach(s=>{
     rctx.beginPath();
-    rctx.arc(s.h/360*W,(100-s.l)/100*H,2.5,0,Math.PI*2);
-    rctx.fillStyle='white';
+    rctx.arc(
+      s.h/360*regions.width,
+      (100-s.l)/100*regions.height,
+      2.5,
+      0,
+      Math.PI*2
+    );
+    rctx.fillStyle=s.hex;
     rctx.fill();
+    rctx.strokeStyle='#ffffff';
+    rctx.lineWidth=0.6;
+    rctx.stroke();
   });
   $('workerStatus').textContent='Up to date';
 }
@@ -331,8 +369,25 @@ function renderStats(){
     tag.className='tag';
     const dot=document.createElement('span');
     dot.className='dot';
-    dot.style.background=`hsl(${i*137.5%360},65%,55%)`;
-    tag.append(dot,document.createTextNode(name));
+    const representative=samples.find(s=>s.name===name);
+    dot.style.background=representative?.hex||'#777777';
+    const label=document.createElement('span');
+    label.textContent=name;
+    const rename=document.createElement('button');
+    rename.textContent='✎';
+    rename.title='Rename category';
+    rename.style.padding='2px 6px';
+    rename.onclick=() => {
+      const newName=prompt('Rename category:',name);
+      if(!newName || !newName.trim()) return;
+      const normalized=newName.trim().toLowerCase();
+      samples.forEach(s=>{
+        if(s.name===name) s.name=normalized;
+      });
+      save();
+      render();
+    };
+    tag.append(dot,label,rename);
     $('categoryList').append(tag);
   });
   $('history').replaceChildren();
