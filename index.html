@@ -711,7 +711,11 @@ space.addEventListener('click', e => {
     }
   });
 
-  if (nearest !== -1 && nearestDistance <= SNAP_RADIUS) {
+  if (
+    !e.altKey &&
+    nearest !== -1 &&
+    nearestDistance <= SNAP_RADIUS
+  ) {
     // Snap to the exact existing sample.
     editingSampleIndex = nearest;
 
@@ -779,7 +783,9 @@ space.addEventListener('mousemove', e => {
   });
 
   const nextHovered =
-    nearestDistance <= SNAP_RADIUS ? nearest : -1;
+    !e.altKey && nearestDistance <= SNAP_RADIUS
+      ? nearest
+      : -1;
 
   if (nextHovered !== hoveredSampleIndex) {
     hoveredSampleIndex = nextHovered;
@@ -790,6 +796,19 @@ space.addEventListener('mousemove', e => {
 space.addEventListener('mouseleave', () => {
   hoveredSampleIndex = -1;
   drawSpace();
+});
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'Alt') {
+    hoveredSampleIndex = -1;
+    drawSpace();
+  }
+});
+
+window.addEventListener('keyup', e => {
+  if (e.key === 'Alt') {
+    drawSpace();
+  }
 });
 
 render();
