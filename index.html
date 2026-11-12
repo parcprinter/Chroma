@@ -497,7 +497,14 @@ const state = {
 };
 state.sequence = state.samples.length + 1;
 
-const renderer = { worker: null, ready: false, request: 0, width: 0, height: 0, samples: [], mode: 'boundaries' };
+const renderer = {
+  worker: null,
+  ready: false,
+  width: 0,
+  height: 0,
+  busy: false,
+  pending: null
+};
 const cursorContext = ui.cursorLayer.getContext('2d');
 
 function loadSamples() {
@@ -674,28 +681,53 @@ function createRenderWorker() {
     self.onmessage = ({ data }) => {
       if (data.type === 'init') {
         [gradientCanvas, categoryCanvas, samplesCanvas] = data.canvases;
+
         gradientContext = gradientCanvas.getContext('2d', { alpha: false });
         categoryContext = categoryCanvas.getContext('2d');
         samplesContext = samplesCanvas.getContext('2d');
+
         self.postMessage({ type: 'ready' });
-      } else if (data.type === 'resize') {
-        if (data.width !== width || data.height !== height) {
-          width = data.width; height = data.height;
-          for (const canvas of [gradientCanvas, categoryCanvas, samplesCanvas]) {
-            canvas.width = width; canvas.height = height;
-          }
-          drawGradient(); drawData();
-        }
-        acknowledge(data.id);
-      } else if (data.type === 'samples') {
-        samples = data.samples;
-        if (width && height) drawData();
-        acknowledge(data.id);
-      } else if (data.type === 'mode') {
-        mode = data.mode;
-        if (owners) drawCategoryOverlay();
-        acknowledge(data.id);
+        return;
       }
+
+      if (data.type !== 'render') return;
+
+      const sizeChanged =
+        data.width !== width ||
+        data.height !== height;
+
+      const samplesChanged =
+        JSON.stringify(data.samples) !== JSON.stringify(samples);
+
+      const modeChanged = data.mode !== mode;
+
+      // Update worker state.
+      samples = data.samples;
+      mode = data.mode;
+
+      if (sizeChanged) {
+        width = data.width;
+        height = data.height;
+
+        for (const canvas of [
+          gradientCanvas,
+          categoryCanvas,
+          samplesCanvas
+        ]) {
+          canvas.width = width;
+          canvas.height = height;
+        }
+
+        drawGradient();
+      }
+
+      if (sizeChanged || samplesChanged) {
+        drawData();
+      } else if (modeChanged && owners) {
+        drawCategoryOverlay();
+      }
+
+      self.postMessage({ type: 'rendered' });
     };
   `;
   const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
@@ -716,13 +748,13 @@ function initializeRenderer() {
       if (data.type === 'ready') {
         renderer.ready = true;
         ui.workerStatus.textContent = 'Ready';
-        if (renderer.width && renderer.height) {
-          postRender('resize', { width: renderer.width, height: renderer.height });
-        }
-        postRender('samples', { samples: renderer.samples });
-        postRender('mode', { mode: renderer.mode });
-      } else if (data.id === renderer.request) {
+        scheduleRender();
+      } else if (data.type === 'rendered') {
+        renderer.busy = false;
         ui.workerStatus.textContent = 'Up to date';
+        processNextRender();
+      } else {
+        console.warn(`Unknown worker response ${data}`);
       }
     };
     renderer.worker.onerror = error => {
@@ -738,13 +770,34 @@ function initializeRenderer() {
   }
 }
 
-function postRender(type, data = {}) {
-  if (type === 'samples') renderer.samples = data.samples;
-  if (type === 'mode') renderer.mode = data.mode;
+function scheduleRender() {
   if (!renderer.worker || !renderer.ready) return;
-  const id = ++renderer.request;
-  ui.workerStatus.textContent = type === 'mode' ? 'Updating view…' : 'Calculating…';
-  renderer.worker.postMessage({ type, id, ...data });
+
+  renderer.pending = {
+    width: renderer.width,
+    height: renderer.height,
+    samples: state.samples.map(({ h, l, name, hex }) => ({
+      h, l, name, hex
+    })),
+    mode: state.view
+  };
+
+  processNextRender();
+}
+
+function processNextRender() {
+  if (renderer.busy || !renderer.pending) return;
+
+  const renderState = renderer.pending;
+  renderer.pending = null;
+  renderer.busy = true;
+
+  ui.workerStatus.textContent = 'Calculating…';
+
+  renderer.worker.postMessage({
+    type: 'render',
+    ...renderState
+  });
 }
 
 function resizeCanvases() {
@@ -757,7 +810,7 @@ function resizeCanvases() {
 
   renderer.width = ui.cursorLayer.width = width;
   renderer.height = ui.cursorLayer.height = height;
-  postRender('resize', { width, height });
+  scheduleRender();
   refreshPointer();
 }
 
@@ -886,9 +939,7 @@ function renderHistory() {
 function render() {
   renderCategories();
   renderHistory();
-  postRender('samples', {
-    samples: state.samples.map(({ h, l, name, hex }) => ({ h, l, name, hex }))
-  });
+  scheduleRender();
   refreshPointer();
 }
 
@@ -978,7 +1029,7 @@ function setView(mode) {
   state.view = mode;
   ui.boundariesToggle.setAttribute('aria-pressed', String(mode === 'boundaries'));
   ui.regionsToggle.setAttribute('aria-pressed', String(mode === 'regions'));
-  postRender('mode', { mode });
+  scheduleRender();
 }
 
 ui.boundariesToggle.addEventListener('click', () => setView('boundaries'));
