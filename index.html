@@ -4,327 +4,328 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chromatic — Color Categories</title>
+<title>Chroma — Color Categories</title>
 <style>
 :root {
-  color-scheme: dark;
-  --bg: #101113;
-  --panel: #191b1f;
-  --border: #303238;
-  --muted: #92959e;
-  --text: #f2f1ed;
-  --accent: #c6f36a;
+  color-scheme:dark;
+  --bg:#101113;--panel:#191b1f;--border:#303238;
+  --muted:#92959e;--text:#f2f1ed;--accent:#c6f36a;
 }
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 14px/1.5 Inter, ui-sans-serif, system-ui, sans-serif;
-}
-main { max-width: 1120px; margin: auto; padding: 40px 24px 70px; }
-header {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:38px;
-}
-.logo { font-size:19px; font-weight:750; letter-spacing:-1px; }
-.logo span { color:var(--accent); }
-.eyebrow {
-  color:var(--muted); font-size:11px; letter-spacing:2px;
-  text-transform:uppercase;
-}
-h1 { font-size:32px; letter-spacing:-1.5px; margin:5px 0; }
-.subtitle { color:var(--muted); margin:0; }
-.layout {
-  display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,.8fr);
-  gap:20px; margin-top:28px;
-}
-.panel {
-  background:var(--panel); border:1px solid var(--border);
-  border-radius:12px; padding:20px;
-}
-.panel-title {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:16px; font-weight:650;
-}
-canvas { width:100%; display:block; border-radius:6px; cursor:crosshair; }
-#space { aspect-ratio:1.5; }
-.legend {
-  display:flex; justify-content:space-between; color:var(--muted);
-  font-size:11px; margin-top:10px;
-}
-.control { margin-top:20px; }
-label { display:block; color:var(--muted); margin-bottom:7px; font-size:12px; }
-input, button {
-  font:inherit; color:var(--text);
-  background:#222429; border:1px solid var(--border);
-  border-radius:7px; padding:11px 12px;
-}
-input:focus { outline:1px solid var(--accent); border-color:var(--accent); }
-button { cursor:pointer; }
-button:hover { border-color:var(--accent); }
-button.primary {
-  background:var(--accent); color:#171a11; border-color:var(--accent);
-  font-weight:700;
-}
-button.primary:hover { background:#d7ff87; }
-button:disabled { opacity:.4; cursor:not-allowed; }
-.sample {
-  height:155px; border-radius:8px; margin-bottom:17px;
-  transition:background .2s;
-}
-.hex { font:12px ui-monospace,monospace; color:var(--muted); }
-.sample-info { display:flex; justify-content:space-between; align-items:center; }
-#category {
-  width:100%; background:#101113;
-}
-.input-wrap { position:relative; }
-.suggestions {
-  position:absolute; top:100%; left:0; right:0; z-index:5;
-  background:#25272c; border:1px solid var(--border);
-  border-radius:7px; margin-top:4px; overflow:hidden;
-}
-.suggestions button {
-  display:block; width:100%; text-align:left; border:0;
-  border-radius:0; background:transparent;
-}
-.suggestions button:hover { background:#35383e; }
-.actions { display:flex; gap:9px; margin-top:14px; }
-.actions button { flex:1; }
-.secondary { color:var(--muted); }
-.stats {
-  display:grid; grid-template-columns:1fr 1fr; gap:10px;
-  margin-top:18px;
-}
-.stat { padding:12px; background:#222429; border-radius:8px; }
-.stat strong { display:block; font-size:22px; }
-.stat span { color:var(--muted); font-size:11px; }
-.bottom { margin-top:20px; }
-#regions { aspect-ratio:1.5; cursor:default; }
-.category-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-.tag {
-  display:flex; align-items:center; gap:7px; padding:6px 9px;
-  border:1px solid var(--border); border-radius:20px; color:var(--muted);
-  font-size:12px;
-}
-.dot { width:9px; height:9px; border-radius:50%; }
-.history { display:flex; gap:5px; flex-wrap:wrap; margin-top:12px; }
-.history-item { width:27px; height:27px; border-radius:5px; }
-footer { margin-top:25px; color:var(--muted); font-size:11px; }
-@media(max-width:760px) {
-  main { padding:24px 15px; }
-  .layout { grid-template-columns:1fr; }
-  h1 { font-size:27px; }
-}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font:14px/1.5 system-ui,sans-serif}
+main{max-width:1120px;margin:auto;padding:40px 24px 70px}
+header{display:flex;justify-content:space-between;margin-bottom:38px}
+.logo{font-size:19px;font-weight:750;letter-spacing:-1px}
+.logo span{color:var(--accent)}
+.eyebrow{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:32px;letter-spacing:-1.5px;margin:5px 0}
+.subtitle{color:var(--muted);margin:0}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.8fr);gap:20px;margin-top:28px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
+.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-weight:650}
+canvas{width:100%;display:block;border-radius:6px}
+#space{aspect-ratio:1.5;cursor:crosshair}
+#regions{aspect-ratio:1.5}
+.legend{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:10px}
+.control{margin-top:20px}
+label{display:block;color:var(--muted);margin-bottom:7px;font-size:12px}
+input,button{font:inherit;color:var(--text);background:#222429;border:1px solid var(--border);border-radius:7px;padding:11px 12px}
+input:focus{outline:1px solid var(--accent);border-color:var(--accent)}
+button{cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#171a11;border-color:var(--accent);font-weight:700}
+button:disabled{opacity:.4;cursor:not-allowed}
+.sample{height:155px;border-radius:8px;margin-bottom:17px}
+.sample-info{display:flex;justify-content:space-between;align-items:center}
+.hex{font:12px ui-monospace,monospace;color:var(--muted)}
+#category{width:100%;background:#101113}
+.input-wrap{position:relative}
+.suggestions{position:absolute;top:100%;left:0;right:0;z-index:5;background:#25272c;border:1px solid var(--border);border-radius:7px;margin-top:4px;overflow:hidden}
+.suggestions button{display:block;width:100%;text-align:left;border:0;border-radius:0;background:transparent}
+.suggestions button:hover{background:#35383e}
+.actions{display:flex;gap:9px;margin-top:14px}
+.actions button{flex:1}
+.secondary{color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.stat{padding:12px;background:#222429;border-radius:8px}
+.stat strong{display:block;font-size:22px}
+.stat span{color:var(--muted);font-size:11px}
+.bottom{margin-top:20px}
+.category-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tag{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-size:12px}
+.dot{width:9px;height:9px;border-radius:50%}
+.history{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.history-item{width:27px;height:27px;border-radius:5px}
+footer{margin-top:25px;color:var(--muted);font-size:11px}
+#workerStatus{font-size:10px;color:var(--muted)}
+@media(max-width:760px){main{padding:24px 15px}.layout{grid-template-columns:1fr}h1{font-size:27px}}
 </style>
 </head>
 <body>
 <main>
 <header>
-  <div class="logo">chroma<span>.</span></div>
-  <div class="eyebrow">COLOR STUDY / 001</div>
+<div class="logo">chroma<span>.</span></div>
+<div class="eyebrow">COLOR STUDY / 001</div>
 </header>
-
 <div class="eyebrow">COLOR PERCEPTION EXPERIMENT</div>
 <h1>Where do colors belong?</h1>
 <p class="subtitle">Explore a color space. Give colors names. Discover the boundaries of language.</p>
 
 <div class="layout">
 <section>
-  <div class="panel">
-    <div class="panel-title">
-      <span>01 / Color space</span>
-      <span class="hex">HUE × LIGHTNESS</span>
-    </div>
-    <canvas id="space"></canvas>
-    <div class="legend"><span>Dark</span><span>Lightness →</span><span>Light</span></div>
-    <div class="control">
-      <label for="sat">Saturation: <span id="satValue">90%</span></label>
-      <input id="sat" type="range" min="50" max="100" value="90" style="width:100%;padding:0;accent-color:var(--accent)">
-    </div>
-    <div class="legend">
-      <span>Hue 0°</span><span>Hue ↑</span><span>Hue 360°</span>
-    </div>
-  </div>
-
-  <div class="panel bottom">
-    <div class="panel-title">
-      <span>03 / Category regions</span>
-      <span class="hex" id="regionCount">0 CATEGORIES</span>
-    </div>
-    <canvas id="regions"></canvas>
-    <div class="legend">
-      <span>Approximate category territories</span>
-      <span>● Samples</span>
-    </div>
-    <div class="category-list" id="categoryList"></div>
-  </div>
+<div class="panel">
+<div class="panel-title"><span>01 / Color space</span><span class="hex">HUE × LIGHTNESS</span></div>
+<canvas id="space"></canvas>
+<div class="legend"><span>Dark</span><span>Lightness →</span><span>Light</span></div>
+<div class="control">
+<label for="sat">Saturation: <span id="satValue">90%</span></label>
+<input id="sat" type="range" min="50" max="100" value="90" style="width:100%;padding:0;accent-color:var(--accent)">
+</div>
+<div class="legend"><span>Hue 0°</span><span>Hue ↑</span><span>Hue 360°</span></div>
+</div>
+<div class="panel bottom">
+<div class="panel-title"><span>03 / Category regions</span><span class="hex" id="regionCount">0 CATEGORIES</span></div>
+<canvas id="regions"></canvas>
+<div class="legend"><span>Approximate category territories</span><span id="workerStatus">Ready</span></div>
+<div class="category-list" id="categoryList"></div>
+</div>
 </section>
 
 <section>
-  <div class="panel">
-    <div class="panel-title">
-      <span>02 / Identify a color</span>
-      <span class="eyebrow" id="progress">SAMPLE 001</span>
-    </div>
-    <div class="sample" id="sample"></div>
-    <div class="sample-info">
-      <span class="eyebrow">CURRENT SAMPLE</span>
-      <span class="hex" id="hex">#000000</span>
-    </div>
-
-    <div class="control">
-      <label for="category">What would you call this color?</label>
-      <div class="input-wrap">
-        <input id="category" type="text" placeholder="e.g. teal, turquoise, cyan..." autocomplete="off">
-        <div class="suggestions" id="suggestions" hidden></div>
-      </div>
-    </div>
-    <div class="actions">
-      <button class="primary" id="submit">Categorize ↗</button>
-      <button id="skip" class="secondary">Skip</button>
-    </div>
-    <button id="random" style="width:100%;margin-top:9px">↻ Generate another sample</button>
-
-    <div class="stats">
-      <div class="stat"><strong id="total">0</strong><span>COLORS LABELED</span></div>
-      <div class="stat"><strong id="count">0</strong><span>UNIQUE CATEGORIES</span></div>
-    </div>
-  </div>
-
-  <div class="panel bottom">
-    <div class="panel-title">
-      <span>04 / Recent samples</span>
-      <span class="hex">HISTORY</span>
-    </div>
-    <div class="history" id="history"></div>
-    <p class="subtitle" style="font-size:12px;margin-top:15px">
-      Your labels build the color vocabulary and gradually reveal the boundaries between categories.
-    </p>
-    <button id="reset" style="margin-top:18px;width:100%;color:#e99b9b">Reset experiment</button>
-  </div>
+<div class="panel">
+<div class="panel-title"><span>02 / Identify a color</span><span class="eyebrow" id="progress">SAMPLE 001</span></div>
+<div class="sample" id="sample"></div>
+<div class="sample-info"><span class="eyebrow">CURRENT SAMPLE</span><span class="hex" id="hex">#000000</span></div>
+<div class="control">
+<label for="category">What would you call this color?</label>
+<div class="input-wrap">
+<input id="category" type="text" placeholder="e.g. teal, turquoise, cyan..." autocomplete="off">
+<div class="suggestions" id="suggestions" hidden></div>
+</div>
+</div>
+<div class="actions">
+<button class="primary" id="submit">Categorize ↗</button>
+<button id="skip" class="secondary">Skip</button>
+</div>
+<button id="random" style="width:100%;margin-top:9px">↻ Generate another sample</button>
+<div class="stats">
+<div class="stat"><strong id="total">0</strong><span>COLORS LABELED</span></div>
+<div class="stat"><strong id="count">0</strong><span>UNIQUE CATEGORIES</span></div>
+</div>
+</div>
+<div class="panel bottom">
+<div class="panel-title"><span>04 / Recent samples</span><span class="hex">HISTORY</span></div>
+<div class="history" id="history"></div>
+<p class="subtitle" style="font-size:12px;margin-top:15px">Your labels build the color vocabulary and gradually reveal the boundaries between categories.</p>
+<button id="reset" style="margin-top:18px;width:100%;color:#e99b9b">Reset experiment</button>
+</div>
 </section>
 </div>
 <footer>CHROMA / A SMALL EXPERIMENT IN COLOR AND LANGUAGE</footer>
 </main>
 
 <script>
+'use strict';
+
 const $ = id => document.getElementById(id);
-const space = $('space'), ctx = space.getContext('2d');
-const regions = $('regions'), rctx = regions.getContext('2d');
+const space = $('space');
+const ctx = space.getContext('2d',{alpha:false});
+const regions = $('regions');
+const rctx = regions.getContext('2d',{alpha:false});
 
-let saturation = 90;
-let samples = JSON.parse(localStorage.getItem('chromaSamples') || '[]');
-let current = null;
-let sequence = samples.length + 1;
+let saturation=90;
+let samples=loadSamples();
+let current=null;
+let sequence=samples.length+1;
+let worker=null;
+let workerVersion=0;
+let pendingResize=false;
 
-const colors = [...new Set(samples.map(s => s.name))];
+function loadSamples(){
+  try {
+    const data=JSON.parse(localStorage.getItem('chromaSamples')||'[]');
+    return Array.isArray(data)?data.filter(s=>
+      Number.isFinite(s.h)&&Number.isFinite(s.l)&&
+      typeof s.name==='string'&&typeof s.hex==='string'
+    ): [];
+  }catch{return []}
+}
 
-function hsl(h,l,s=saturation) {
+function save(){
+  try{localStorage.setItem('chromaSamples',JSON.stringify(samples))}
+  catch(e){console.warn('Could not save samples',e)}
+}
+
+function rgb(h,l,s){
+  s/=100;l/=100;
+  const a=s*Math.min(l,1-l);
+  const f=n=>{
+    const k=(n+h/30)%12;
+    const c=l-a*Math.max(-1,Math.min(k-3,9-k,1));
+    return Math.round(255*c);
+  };
+  return [f(0),f(8),f(4)];
+}
+function toHex(h,l,s){
+  return '#'+rgb(h,l,s).map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+function hsl(h,l,s=saturation){
   return `hsl(${h},${s}%,${l}%)`;
 }
-function hex(h,l,s=saturation) {
-  const c = document.createElement('canvas').getContext('2d');
-  c.fillStyle=hsl(h,l,s);
-  return c.fillStyle;
+function rand(){
+  return {h:Math.random()*360,l:15+Math.random()*70};
 }
-function rand() {
-  return {
-    h:Math.random()*360,
-    l:15+Math.random()*70
+
+// Background worker: calculates category territory at only 180x120.
+function createWorker(){
+  const source=`
+  self.onmessage=e=>{
+    const {samples,version}=e.data;
+    const W=180,H=120;
+    const result=new Uint8Array(W*H);
+    if(!samples.length){
+      self.postMessage({result,version},[result.buffer]);return;
+    }
+    const n=samples.length;
+    const hue=new Float32Array(n);
+    const light=new Float32Array(n);
+    const names=new Map();
+    samples.forEach((s,i)=>{
+      hue[i]=s.h;
+      light[i]=s.l;
+      if(!names.has(s.name))names.set(s.name,names.size+1);
+    });
+    for(let y=0;y<H;y++){
+      const l=100-y/H*100;
+      for(let x=0;x<W;x++){
+        const h=x/W*360;
+        let best=Infinity,bestId=0;
+        for(let i=0;i<n;i++){
+          let dh=Math.abs(h-hue[i]);
+          dh=Math.min(dh,360-dh);
+          // Cylindrical hue/lightness distance.
+          dh*=Math.max(.15,Math.sin((100-l)*Math.PI/180));
+          const dl=(l-light[i])*1.8;
+          const d=dh*dh+dl*dl;
+          if(d<best){
+            best=d;
+            bestId=names.get(samples[i].name);
+          }
+        }
+        result[y*W+x]=bestId;
+      }
+    }
+    self.postMessage({
+      result:result.buffer,version,
+      names:[...names.keys()]
+    },[result.buffer]);
+  };`;
+  const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
+  const w=new Worker(url);
+  URL.revokeObjectURL(url);
+  return w;
+}
+
+try{
+  worker=createWorker();
+  worker.onmessage=e=>{
+    if(e.data.version!==workerVersion)return;
+    drawRegionResult(e.data.result,e.data.names||[]);
   };
+  worker.onerror=()=>{
+    $('workerStatus').textContent='Region worker unavailable';
+  };
+}catch(e){
+  $('workerStatus').textContent='Worker unavailable';
 }
-function resize(canvas,context,draw) {
-  const rect=canvas.getBoundingClientRect();
-  const dpr=window.devicePixelRatio||1;
-  canvas.width=rect.width*dpr;
-  canvas.height=rect.height*dpr;
-  context.setTransform(dpr,0,0,dpr,0,0);
-  draw(rect.width,rect.height);
-}
-function drawSpace(w,h) {
-  const img=ctx.createImageData(space.width,space.height);
-  const data=img.data;
-  for(let y=0;y<space.height;y++) {
-    const l=100-(y/space.height)*100;
-    for(let x=0;x<space.width;x++) {
-      const hue=x/space.width*360;
-      const i=(y*space.width+x)*4;
-      const color=hex(hue,l,saturation);
-      const c=color.match(/[0-9a-f]{2}/gi);
-      data[i]=parseInt(c[0],16);
-      data[i+1]=parseInt(c[1],16);
-      data[i+2]=parseInt(c[2],16);
-      data[i+3]=255;
+
+function drawSpace(){
+  const rect=space.getBoundingClientRect();
+  const W=360,H=240;
+  if(!rect.width)return;
+  space.width=W;space.height=H;
+  const image=ctx.createImageData(W,H);
+  const data=image.data;
+  for(let y=0;y<H;y++){
+    const l=100-y/H*100;
+    for(let x=0;x<W;x++){
+      const c=rgb(x/W*360,l,saturation);
+      const i=(y*W+x)*4;
+      data[i]=c[0];data[i+1]=c[1];data[i+2]=c[2];data[i+3]=255;
     }
   }
-  ctx.putImageData(img,0,0);
-  if(current) {
-    ctx.beginPath();
-    ctx.arc(current.h/360*w,(100-current.l)/100*h,7,0,Math.PI*2);
-    ctx.strokeStyle='white';
-    ctx.lineWidth=2;
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(current.h/360*w,(100-current.l)/100*h,2,0,Math.PI*2);
+  ctx.putImageData(image,0,0);
+  if(current){
+    const x=current.h/360*W,y=(100-current.l)/100*H;
+    ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);
+    ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);
     ctx.fillStyle='white';ctx.fill();
   }
 }
-function drawRegions(w,h) {
-  rctx.clearRect(0,0,w,h);
-  rctx.fillStyle='#111216';rctx.fillRect(0,0,w,h);
-  const labels=[...new Set(samples.map(s=>s.name))];
-  const palette=labels.map((_,i)=>`hsl(${i*137.5%360},65%,55%)`);
-  const cell=5;
-  for(let y=0;y<h;y+=cell) {
-    for(let x=0;x<w;x+=cell) {
-      const hue=x/w*360, light=100-y/h*100;
-      let closest=null,dist=Infinity;
-      for(const s of samples) {
-        let dh=Math.abs(hue-s.h);
-        dh=Math.min(dh,360-dh)*Math.cos(light*Math.PI/180);
-        let dl=(light-s.l)*2;
-        let d=dh*dh+dl*dl;
-        if(d<dist){dist=d;closest=s;}
-      }
-      if(closest) {
-        const i=labels.indexOf(closest.name);
-        rctx.fillStyle=palette[i];
-        rctx.globalAlpha=.65;
-        rctx.fillRect(x,y,cell,cell);
-      }
+
+function drawRegionResult(buffer,names){
+  const W=180,H=120;
+  const result=new Uint8Array(buffer);
+  const image=rctx.createImageData(W,H);
+  const palette=names.map((_,i)=>rgb(i*137.5%360,55,65));
+  for(let i=0;i<result.length;i++){
+    const id=result[i]-1;
+    const p=i*4;
+    if(id>=0&&palette[id]){
+      const c=palette[id];
+      image.data[p]=c[0];
+      image.data[p+1]=c[1];
+      image.data[p+2]=c[2];
+    }else{
+      image.data[p]=17;
+      image.data[p+1]=18;
+      image.data[p+2]=22;
     }
+    image.data[p+3]=255;
   }
-  rctx.globalAlpha=1;
+  rctx.putImageData(image,0,0);
+  // Draw sample markers.
   samples.forEach(s=>{
-    const x=s.h/360*w,y=(100-s.l)/100*h;
-    rctx.beginPath();rctx.arc(x,y,3,0,Math.PI*2);
-    rctx.fillStyle='white';rctx.fill();
+    rctx.beginPath();
+    rctx.arc(s.h/360*W,(100-s.l)/100*H,2.5,0,Math.PI*2);
+    rctx.fillStyle='white';
+    rctx.fill();
+  });
+  $('workerStatus').textContent='Up to date';
+}
+
+function updateRegions(){
+  if(!worker){
+    rctx.fillStyle='#111216';
+    rctx.fillRect(0,0,regions.width,regions.height);
+    return;
+  }
+  const version=++workerVersion;
+  $('workerStatus').textContent='Calculating…';
+  // Only send the fields the worker needs.
+  worker.postMessage({
+    samples:samples.map(s=>({h:s.h,l:s.l,name:s.name})),
+    version
   });
 }
-function render() {
-  resize(space,ctx,drawSpace);
-  resize(regions,rctx,drawRegions);
-  renderStats();
+
+function resizeCanvas(){
+  const rect=regions.getBoundingClientRect();
+  if(!rect.width)return;
+  regions.width=360;
+  regions.height=240;
+  rctx.fillStyle='#111216';
+  rctx.fillRect(0,0,360,240);
 }
-function next() {
-  current=rand();
-  $('sample').style.background=hsl(current.h,current.l);
-  $('hex').textContent=hex(current.h,current.l);
-  $('category').value='';
-  $('suggestions').hidden=true;
-  $('progress').textContent='SAMPLE '+String(sequence).padStart(3,'0');
-  render();
-}
-function save() {
-  localStorage.setItem('chromaSamples',JSON.stringify(samples));
-}
-function renderStats() {
+
+function renderStats(){
   const labels=[...new Set(samples.map(s=>s.name))];
   $('total').textContent=samples.length;
   $('count').textContent=labels.length;
   $('regionCount').textContent=labels.length+' CATEGORIES';
-  $('categoryList').innerHTML='';
+  $('categoryList').replaceChildren();
   labels.forEach((name,i)=>{
     const tag=document.createElement('div');
     tag.className='tag';
@@ -334,7 +335,7 @@ function renderStats() {
     tag.append(dot,document.createTextNode(name));
     $('categoryList').append(tag);
   });
-  $('history').innerHTML='';
+  $('history').replaceChildren();
   samples.slice(-35).reverse().forEach(s=>{
     const el=document.createElement('div');
     el.className='history-item';
@@ -343,55 +344,120 @@ function renderStats() {
     $('history').append(el);
   });
 }
-function categorize() {
+
+function render(){
+  drawSpace();
+  renderStats();
+  resizeCanvas();
+  updateRegions();
+}
+
+function next(){
+  current=rand();
+  $('sample').style.background=hsl(current.h,current.l);
+  $('hex').textContent=toHex(current.h,current.l,saturation);
+  $('category').value='';
+  $('suggestions').hidden=true;
+  $('progress').textContent='SAMPLE '+String(sequence).padStart(3,'0');
+  drawSpace();
+  $('category').focus({preventScroll:true});
+}
+
+function categorize(){
   const name=$('category').value.trim().toLowerCase();
-  if(!name || !current)return;
+  if(!name||!current)return;
   samples.push({
-    ...current,name,
-    hex:hex(current.h,current.l),
+    h:current.h,l:current.l,name,
+    hex:toHex(current.h,current.l,saturation),
     time:Date.now()
   });
-  colors.push(name);
   sequence++;
   save();
+  renderStats();
+  updateRegions();
   next();
 }
+
 $('submit').onclick=categorize;
 $('skip').onclick=()=>{sequence++;next()};
 $('random').onclick=()=>{sequence++;next()};
+
 $('category').addEventListener('keydown',e=>{
-  if(e.key==='Enter')categorize();
-  if(e.key==='Tab') {
+  if(e.key==='Enter'){
+    e.preventDefault();
+    categorize();
+  }
+  if(e.key==='Tab'){
     const first=$('suggestions').querySelector('button');
-    if(first){e.preventDefault();$('category').value=first.textContent;$('suggestions').hidden=true;}
+    if(first){
+      e.preventDefault();
+      $('category').value=first.textContent;
+      $('suggestions').hidden=true;
+    }
   }
   if(e.key==='Escape')$('suggestions').hidden=true;
 });
+
 $('category').addEventListener('input',()=>{
   const value=$('category').value.trim().toLowerCase();
-  const matches=[...new Set(colors)].filter(n=>n.includes(value)&&value&&n!==value);
+  const matches=[...new Set(samples.map(s=>s.name))]
+    .filter(n=>n.includes(value)&&value&&n!==value)
+    .slice(0,6);
   const box=$('suggestions');
-  box.innerHTML='';
-  matches.slice(0,6).forEach(name=>{
+  box.replaceChildren();
+  matches.forEach(name=>{
     const btn=document.createElement('button');
     btn.textContent=name;
-    btn.onclick=()=>{$('category').value=name;box.hidden=true;$('category').focus()};
+    btn.onclick=()=>{
+      $('category').value=name;
+      box.hidden=true;
+      $('category').focus();
+    };
     box.append(btn);
   });
   box.hidden=!matches.length;
 });
+
 $('sat').oninput=e=>{
   saturation=+e.target.value;
   $('satValue').textContent=saturation+'%';
-  render();
-  if(current)$('sample').style.background=hsl(current.h,current.l);
-  if(current)$('hex').textContent=hex(current.h,current.l);
+  $('sample').style.background=hsl(current.h,current.l);
+  $('hex').textContent=toHex(current.h,current.l,saturation);
+  drawSpace();
 };
+
 $('reset').onclick=()=>{
   if(!confirm('Delete all samples and start over?'))return;
-  samples=[];colors.length=0;sequence=1;save();next();
+  samples=[];
+  sequence=1;
+  save();
+  render();
+  next();
 };
-window.addEventListener('resize',render);
+
+// Click anywhere on the color plane to inspect that color.
+space.addEventListener('click',e=>{
+  const rect=space.getBoundingClientRect();
+  current={
+    h:Math.max(0,Math.min(359.99,(e.clientX-rect.left)/rect.width*360)),
+    l:Math.max(0,Math.min(100,100-(e.clientY-rect.top)/rect.height*100))
+  };
+  $('sample').style.background=hsl(current.h,current.l);
+  $('hex').textContent=toHex(current.h,current.l,saturation);
+  drawSpace();
+});
+
+let resizeTimer;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{
+    drawSpace();
+    resizeCanvas();
+    updateRegions();
+  },100);
+});
+
+render();
 next();
 </script>
 </body>
