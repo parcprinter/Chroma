@@ -173,6 +173,10 @@ let worker=null;
 let workerVersion=0;
 let pendingResize=false;
 
+let frozenSuggestions = [];
+let suggestionIndex = -1;
+let suggestionsFrozen = false;
+
 function loadSamples(){
   try {
     const data=JSON.parse(localStorage.getItem('chromaSamples')||'[]');
@@ -685,40 +689,124 @@ function categorize() {
 $('submit').onclick=categorize;
 $('skip').onclick=()=>{sequence++;next()};
 
-$('category').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
+$('category').addEventListener('keydown', e => {
+  const box = $('suggestions');
+
+  if (e.key === 'Enter') {
     e.preventDefault();
-    categorize();
-  }
-  if(e.key==='Tab'){
-    const first=$('suggestions').querySelector('button');
-    if(first){
-      e.preventDefault();
-      $('category').value=first.textContent;
-      $('suggestions').hidden=true;
+
+    if (suggestionsFrozen && suggestionIndex >= 0) {
+      $('category').value = frozenSuggestions[suggestionIndex];
     }
+
+    categorize();
+    return;
   }
-  if(e.key==='Escape')$('suggestions').hidden=true;
+
+  if (e.key === 'Tab' || e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    if (!frozenSuggestions.length && !suggestionsFrozen) {
+      freezeSuggestions();
+    }
+
+    if (!frozenSuggestions.length) return;
+
+    e.preventDefault();
+
+    if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)) {
+      suggestionIndex = (suggestionIndex + 1) % frozenSuggestions.length;
+    } else {
+      suggestionIndex = (
+        suggestionIndex - 1 + frozenSuggestions.length
+      ) % frozenSuggestions.length;
+    }
+
+    showSuggestionSelection();
+    return;
+  }
+
+  if (e.key === 'Escape') {
+    unfreezeSuggestions();
+  }
 });
 
-$('category').addEventListener('input',()=>{
-  const value=$('category').value.trim().toLowerCase();
-  const matches=[...new Set(samples.map(s=>s.name))]
-    .filter(n=>n.includes(value)&&value&&n!==value)
-    .slice(0,6);
-  const box=$('suggestions');
+function freezeSuggestions() {
+  const value = $('category').value.trim().toLowerCase();
+
+  frozenSuggestions = [...new Set(samples.map(s => s.name))]
+    .filter(name => value && name.includes(value))
+    .slice(0, 6);
+
+  suggestionsFrozen = true;
+  suggestionIndex = -1;
+}
+
+function showSuggestionSelection() {
+  const box = $('suggestions');
   box.replaceChildren();
-  matches.forEach(name=>{
-    const btn=document.createElement('button');
-    btn.textContent=name;
-    btn.onclick=()=>{
-      $('category').value=name;
-      box.hidden=true;
+
+  frozenSuggestions.forEach((name, i) => {
+    const btn = document.createElement('button');
+
+    btn.textContent = name;
+
+    if (i === suggestionIndex) {
+      btn.style.background = '#41454c';
+      btn.style.color = '#c6f36a';
+    }
+
+    btn.onclick = () => {
+      $('category').value = name;
+      unfreezeSuggestions();
       $('category').focus();
     };
+
     box.append(btn);
   });
-  box.hidden=!matches.length;
+
+  box.hidden = frozenSuggestions.length === 0;
+
+  if (suggestionIndex >= 0) {
+    $('category').value = frozenSuggestions[suggestionIndex];
+  }
+}
+
+function unfreezeSuggestions() {
+  suggestionsFrozen = false;
+  frozenSuggestions = [];
+  suggestionIndex = -1;
+  $('suggestions').hidden = true;
+}
+
+$('category').addEventListener('input', () => {
+  // Typing starts a fresh suggestion search.
+  suggestionsFrozen = false;
+  frozenSuggestions = [];
+  suggestionIndex = -1;
+
+  const value = $('category').value.trim().toLowerCase();
+
+  const matches = [...new Set(samples.map(s => s.name))]
+    .filter(name => value && name.includes(value))
+    .slice(0, 6);
+
+  const box = $('suggestions');
+  box.replaceChildren();
+
+  matches.forEach(name => {
+    const btn = document.createElement('button');
+
+    btn.textContent = name;
+
+    btn.onclick = () => {
+      $('category').value = name;
+      unfreezeSuggestions();
+      $('category').focus();
+    };
+
+    box.append(btn);
+  });
+
+  box.hidden = !matches.length;
 });
 
 $('reset').onclick=()=>{
