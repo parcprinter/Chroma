@@ -86,7 +86,21 @@ footer{margin-top:25px;color:var(--muted);font-size:11px}
 </div>
 <div class="panel bottom">
 <div class="panel-title"><span>03 / Category regions</span><span class="hex" id="regionCount">0 CATEGORIES</span></div>
-<canvas id="regions"></canvas>
+<div id="regionsWrap" style="position:relative;width:100%">
+  <canvas id="regions"></canvas>
+  <div id="regionCursor" style="
+    position:absolute;
+    display:none;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    border:3px solid white;
+    box-shadow:0 0 0 1px #111, 0 1px 5px #000;
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    z-index:10;
+  "></div>
+</div>
 <div class="legend"><span>Approximate category territories</span><span id="workerStatus">Ready</span></div>
 <div class="category-list" id="categoryList"></div>
 </div>
@@ -144,7 +158,9 @@ let boundaryLayer = null;
 let boundaryLayerKey = '';
 let editingSampleIndex = null;
 
+let regionHover = null;
 let hoveredSampleIndex = -1;
+let regionImageCache = null;
 
 let saturation=90;
 let samples=loadSamples();
@@ -825,6 +841,204 @@ window.addEventListener('keyup', e => {
     drawSpace();
   }
 });
+
+// Convert a position on the region map into HSL coordinates.
+function getRegionCoordinates(e) {
+  const rect = regions.getBoundingClientRect();
+
+  const h = Math.max(
+    0,
+    Math.min(
+      359.99,
+      (e.clientX - rect.left) / rect.width * 360
+    )
+  );
+
+  const l = Math.max(
+    0,
+    Math.min(
+      100,
+      100 - (e.clientY - rect.top) / rect.height * 100
+    )
+  );
+
+  return { h, l, rect };
+}
+
+
+// Find the nearest existing sample within SNAP_RADIUS.
+function findNearestRegionSample(h, l, rect) {
+  let nearest = -1;
+  let nearestDistance = Infinity;
+
+  const SNAP_RADIUS = 10;
+
+  samples.forEach((s, i) => {
+    let dx = Math.abs(s.h - h) / 360 * rect.width;
+
+    // Account for hue wrapping.
+    dx = Math.min(dx, rect.width - dx);
+
+    const dy = Math.abs(s.l - l) / 100 * rect.height;
+
+    const distance = Math.hypot(dx, dy);
+
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearest = i;
+    }
+  });
+
+  return nearestDistance <= SNAP_RADIUS ? nearest : -1;
+}
+
+const regionCursor = $('regionCursor');
+
+regions.addEventListener('mousemove', e => {
+  const { h, l, rect } = getRegionCoordinates(e);
+
+  const nearest = e.altKey
+    ? -1
+    : findNearestRegionSample(h, l, rect);
+
+  let displayH = h;
+  let displayL = l;
+  let color = toHex(h, l, saturation);
+
+  if (nearest !== -1) {
+    displayH = samples[nearest].h;
+    displayL = samples[nearest].l;
+    color = samples[nearest].hex;
+  }
+
+  const x = displayH / 360 * rect.width;
+  const y = (100 - displayL) / 100 * rect.height;
+
+  regionCursor.style.display = 'block';
+  regionCursor.style.left = `${x}px`;
+  regionCursor.style.top = `${y}px`;
+  regionCursor.style.background = color;
+});
+
+regions.addEventListener('mouseleave', () => {
+  regionCursor.style.display = 'none';
+});
+
+
+// Select a color by clicking the region map.
+regions.addEventListener('click', e => {
+  const { h, l, rect } = getRegionCoordinates(e);
+
+  const nearest = e.altKey
+    ? -1
+    : findNearestRegionSample(h, l, rect);
+
+  if (nearest !== -1) {
+    // Select and edit an existing sample.
+    editingSampleIndex = nearest;
+
+    current = {
+      h: samples[nearest].h,
+      l: samples[nearest].l
+    };
+
+    $('category').value = samples[nearest].name;
+
+  } else {
+    // Select a new color.
+    editingSampleIndex = null;
+
+    current = { h, l };
+
+    $('category').value = '';
+  }
+
+  $('suggestions').hidden = true;
+
+  $('sample').style.background = hsl(
+    current.h,
+    current.l
+  );
+
+  $('hex').textContent = toHex(
+    current.h,
+    current.l,
+    saturation
+  );
+
+  drawSpace();
+
+  // Keep both maps synchronized.
+  updateRegionHoverFromSelection();
+});
+
+// Alt disables snapping while hovering.
+window.addEventListener('keydown', e => {
+  if (e.key === 'Alt' && regionHover) {
+    regionHover = null;
+    drawRegionResultFromCache();
+  }
+});
+
+window.addEventListener('keyup', e => {
+  if (e.key === 'Alt') {
+    regionHover = null;
+    drawRegionResultFromCache();
+  }
+});
+
+function drawRegionResultFromCache() {
+  if (!regionImageCache) return;
+
+  rctx.putImageData(regionImageCache, 0, 0);
+
+  const gradient = rctx.createLinearGradient(
+    0, 0, 0, REGION_HEIGHT
+  );
+
+  gradient.addColorStop(0, '#000000');
+  gradient.addColorStop(1, '#ffffff');
+
+  // Sample markers
+  samples.forEach(s => {
+    rctx.beginPath();
+    rctx.arc(
+      s.h / 360 * REGION_WIDTH,
+      (100 - s.l) / 100 * REGION_HEIGHT,
+      10, 0, Math.PI * 2
+    );
+
+    rctx.fillStyle = s.hex;
+    rctx.fill();
+    rctx.strokeStyle = gradient;
+    rctx.lineWidth = 1.6;
+    rctx.stroke();
+  });
+
+  // Hover indicator
+  if (regionHover) {
+    rctx.beginPath();
+    rctx.arc(
+      regionHover.x,
+      regionHover.y,
+      8,
+      0,
+      Math.PI * 2
+    );
+
+    rctx.fillStyle = regionHover.color;
+    rctx.fill();
+
+    rctx.strokeStyle = gradient;
+    rctx.lineWidth = 3;
+    rctx.stroke();
+  }
+}
+
+function updateRegionHoverFromSelection() {
+  regionHover = null;
+  drawRegionResultFromCache();
+}
 
 render();
 next();
